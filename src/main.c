@@ -34,7 +34,7 @@
 #define TITLE_TEXT "my midi eq"
 #define BG_IMAGE_OPA 190
 #define BG_VEIL_OPA 90
-#define SCREEN_DIM_OPA LV_OPA_TRANSP
+#define SCREEN_DIM_OPA 100
 #define MODE_BUTTON_DEBOUNCE_MS 180
 #define PROGRESS_LINE_H 6
 #define PEAK_CAP_H 3
@@ -109,10 +109,20 @@ static const struct gpio_dt_spec pause_button = GPIO_DT_SPEC_GET(DT_ALIAS(sw2), 
 #define HAVE_PAUSE_BUTTON 0
 #endif
 
+#if DT_NODE_HAS_STATUS(DT_ALIAS(sw3), okay)
+static const struct gpio_dt_spec viz_button = GPIO_DT_SPEC_GET(DT_ALIAS(sw3), gpios);
+#define HAVE_VIZ_BUTTON 1
+#else
+#define HAVE_VIZ_BUTTON 0
+#endif
+
 static lv_obj_t *eq_slot[EQ_BAR_COUNT];
 static lv_obj_t *eq_fill[EQ_BAR_COUNT];
 static lv_obj_t *eq_flash[EQ_BAR_COUNT];
 static lv_obj_t *eq_cap[EQ_BAR_COUNT];
+static lv_obj_t *circle_line[EQ_BAR_COUNT];
+static lv_point_precise_t circle_points[EQ_BAR_COUNT][2];
+static lv_obj_t *circle_ring_obj;
 static lv_obj_t *title_glow_label;
 static lv_obj_t *title_label;
 static lv_obj_t *title_line_obj;
@@ -132,6 +142,7 @@ static bool show_elapsed_time;
 static volatile bool mode_toggle_pending;
 static volatile bool scene_cycle_pending;
 static volatile bool pause_toggle_pending;
+static volatile bool viz_toggle_pending;
 static uint32_t prng_state = 0xA5A5F00DU;
 static uint32_t midi_frame_cursor;
 static uint32_t midi_frame_elapsed_ms;
@@ -141,7 +152,9 @@ static uint32_t playback_start_ms;
 static int64_t mode_button_last_press_ms;
 static int64_t scene_button_last_press_ms;
 static int64_t pause_button_last_press_ms;
+static int64_t viz_button_last_press_ms;
 static uint8_t active_scene_idx;
+static uint8_t active_visual_mode;
 static bool playback_paused;
 static uint32_t playback_pause_started_ms;
 static uint32_t playback_pause_accum_ms;
@@ -164,7 +177,13 @@ static struct gpio_callback scene_button_cb_data;
 static struct gpio_callback pause_button_cb_data;
 #endif
 
+#if HAVE_VIZ_BUTTON
+static struct gpio_callback viz_button_cb_data;
+#endif
+
 static uint32_t playback_elapsed_ms(void);
+static void update_circle_visual(void);
+static void set_visual_mode(uint8_t mode);
 
 enum scene_id {
 	SCENE_WHITE = 0,
@@ -172,6 +191,20 @@ enum scene_id {
 	SCENE_BOTANIC_POP,
 	SCENE_SUNSET_HEAT,
 	SCENE_COUNT
+};
+
+enum visual_mode_id {
+	VIS_MODE_BARS = 0,
+	VIS_MODE_CIRCLE,
+	VIS_MODE_COUNT
+};
+
+static const int16_t circle_dir_x_q10[EQ_BAR_COUNT] = {
+	0, 512, 887, 1024, 887, 512, 0, -512, -887, -1024, -887, -512
+};
+
+static const int16_t circle_dir_y_q10[EQ_BAR_COUNT] = {
+	-1024, -887, -512, 0, 512, 887, 1024, 887, 512, 0, -512, -887
 };
 
 struct scene_cfg {
@@ -420,6 +453,106 @@ static void update_progress_line(void)
 #endif
 }
 
+static void update_circle_visual(void)
+{
+	if (active_visual_mode != VIS_MODE_CIRCLE) {
+		return;
+	}
+
+	lv_coord_t top_pad = 36;
+	lv_coord_t bottom_pad = 8;
+	lv_coord_t area_h = disp_h - top_pad - bottom_pad;
+	lv_coord_t center_x = disp_w / 2;
+	lv_coord_t center_y = top_pad + (area_h / 2) + 6;
+	lv_coord_t inner_radius = (lv_coord_t)(MIN(disp_w, area_h) / 4);
+	lv_coord_t min_ext = MAX(6, (lv_coord_t)(inner_radius / 10));
+	lv_coord_t max_ext = MAX(20, (lv_coord_t)((inner_radius * 3) / 4));
+
+	if (inner_radius < 30) {
+		inner_radius = 30;
+	}
+
+	if (circle_ring_obj != NULL) {
+		lv_coord_t d = inner_radius * 2;
+		lv_obj_set_size(circle_ring_obj, d, d);
+		lv_obj_set_pos(circle_ring_obj, center_x - inner_radius, center_y - inner_radius);
+	}
+
+	for (uint8_t i = 0; i < EQ_BAR_COUNT; i++) {
+		int32_t level = (int32_t)(eq_level_fp[i] >> FP_SHIFT);
+		int32_t flash_level = (int32_t)(eq_flash_fp[i] >> FP_SHIFT);
+		int32_t pulse_level;
+		int32_t ext;
+		int32_t sx;
+		int32_t sy;
+		int32_t ex;
+		int32_t ey;
+
+		if (level < 0) {
+			level = 0;
+		}
+		if (level > EQ_MAX_LEVEL) {
+			level = EQ_MAX_LEVEL;
+		}
+		if (flash_level < level) {
+			flash_level = level;
+		}
+		if (flash_level > EQ_MAX_LEVEL) {
+			flash_level = EQ_MAX_LEVEL;
+		}
+
+		pulse_level = level + (((flash_level - level) * 3) / 4);
+		ext = min_ext + ((pulse_level * max_ext) / EQ_MAX_LEVEL);
+
+		sx = center_x + ((circle_dir_x_q10[i] * inner_radius) / 1024);
+		sy = center_y + ((circle_dir_y_q10[i] * inner_radius) / 1024);
+		ex = center_x + ((circle_dir_x_q10[i] * (inner_radius + ext)) / 1024);
+		ey = center_y + ((circle_dir_y_q10[i] * (inner_radius + ext)) / 1024);
+
+		circle_points[i][0].x = sx;
+		circle_points[i][0].y = sy;
+		circle_points[i][1].x = ex;
+		circle_points[i][1].y = ey;
+
+		if (circle_line[i] != NULL) {
+			lv_line_set_points(circle_line[i], circle_points[i], 2);
+		}
+	}
+}
+
+static void set_visual_mode(uint8_t mode)
+{
+	bool circle_mode = ((mode % VIS_MODE_COUNT) == VIS_MODE_CIRCLE);
+	active_visual_mode = circle_mode ? VIS_MODE_CIRCLE : VIS_MODE_BARS;
+
+	for (uint8_t i = 0; i < EQ_BAR_COUNT; i++) {
+		if (eq_slot[i] != NULL) {
+			if (circle_mode) {
+				lv_obj_add_flag(eq_slot[i], LV_OBJ_FLAG_HIDDEN);
+			} else {
+				lv_obj_clear_flag(eq_slot[i], LV_OBJ_FLAG_HIDDEN);
+			}
+		}
+		if (circle_line[i] != NULL) {
+			if (circle_mode) {
+				lv_obj_clear_flag(circle_line[i], LV_OBJ_FLAG_HIDDEN);
+			} else {
+				lv_obj_add_flag(circle_line[i], LV_OBJ_FLAG_HIDDEN);
+			}
+		}
+	}
+
+	if (circle_ring_obj != NULL) {
+		if (circle_mode) {
+			lv_obj_clear_flag(circle_ring_obj, LV_OBJ_FLAG_HIDDEN);
+		} else {
+			lv_obj_add_flag(circle_ring_obj, LV_OBJ_FLAG_HIDDEN);
+		}
+	}
+
+	update_circle_visual();
+}
+
 static void apply_scene_styles(void)
 {
 	for (uint8_t i = 0; i < EQ_BAR_COUNT; i++) {
@@ -465,6 +598,12 @@ static void apply_scene_styles(void)
 			lv_obj_set_style_shadow_width(eq_cap[i], 10, 0);
 			lv_obj_set_style_shadow_opa(eq_cap[i], 230, 0);
 		}
+		if (circle_line[i] != NULL) {
+			lv_obj_set_style_line_color(circle_line[i], lv_color_hex(base_hex), 0);
+			lv_obj_set_style_line_width(circle_line[i], 3, 0);
+			lv_obj_set_style_line_rounded(circle_line[i], true, 0);
+			lv_obj_set_style_line_opa(circle_line[i], LV_OPA_COVER, 0);
+		}
 	}
 
 	if (progress_fill_obj != NULL) {
@@ -474,6 +613,16 @@ static void apply_scene_styles(void)
 			lv_color_hex(palette_hex(active_scene_idx, 235U)),
 			0
 		);
+	}
+
+	if (circle_ring_obj != NULL) {
+		uint32_t ring_hex = palette_hex(active_scene_idx, 128U);
+		uint32_t glow_hex = blend_hex(ring_hex, 0xFFFFFFU, 60U);
+
+		lv_obj_set_style_border_color(circle_ring_obj, lv_color_hex(ring_hex), 0);
+		lv_obj_set_style_shadow_color(circle_ring_obj, lv_color_hex(glow_hex), 0);
+		lv_obj_set_style_shadow_width(circle_ring_obj, 8, 0);
+		lv_obj_set_style_shadow_opa(circle_ring_obj, 130, 0);
 	}
 }
 
@@ -680,6 +829,26 @@ static void pause_button_isr(
 }
 #endif
 
+#if HAVE_VIZ_BUTTON
+static void viz_button_isr(
+	const struct device *port,
+	struct gpio_callback *cb,
+	uint32_t pins
+)
+{
+	ARG_UNUSED(port);
+	ARG_UNUSED(cb);
+	ARG_UNUSED(pins);
+
+	int64_t now = k_uptime_get();
+	if ((now - viz_button_last_press_ms) < MODE_BUTTON_DEBOUNCE_MS) {
+		return;
+	}
+	viz_button_last_press_ms = now;
+	viz_toggle_pending = true;
+}
+#endif
+
 static void setup_mode_button(void)
 {
 #if HAVE_MODE_BUTTON
@@ -746,6 +915,28 @@ static void setup_pause_button(void)
 #endif
 }
 
+static void setup_viz_button(void)
+{
+#if HAVE_VIZ_BUTTON
+	if (!gpio_is_ready_dt(&viz_button)) {
+		printk("Visualizer button not ready\\n");
+		return;
+	}
+	if (gpio_pin_configure_dt(&viz_button, GPIO_INPUT) != 0) {
+		printk("Visualizer button config failed\\n");
+		return;
+	}
+	if (gpio_pin_interrupt_configure_dt(&viz_button, GPIO_INT_EDGE_TO_ACTIVE) != 0) {
+		printk("Visualizer button interrupt setup failed\\n");
+		return;
+	}
+	gpio_init_callback(&viz_button_cb_data, viz_button_isr, BIT(viz_button.pin));
+	if (gpio_add_callback(viz_button.port, &viz_button_cb_data) != 0) {
+		printk("Visualizer button callback add failed\\n");
+	}
+#endif
+}
+
 static void ground_all_bars(void)
 {
 	for (uint8_t i = 0; i < EQ_BAR_COUNT; i++) {
@@ -765,6 +956,8 @@ static void ground_all_bars(void)
 			lv_obj_set_y(eq_cap[i], slot_h_px - PEAK_CAP_H);
 		}
 	}
+
+	update_circle_visual();
 }
 
 static void excite_energy(uint32_t dt_ms)
@@ -1037,6 +1230,41 @@ static int create_eq_ui(void)
 		lv_obj_clear_flag(cap, LV_OBJ_FLAG_SCROLLABLE);
 	}
 
+	circle_ring_obj = lv_obj_create(screen);
+	if (circle_ring_obj == NULL) {
+		return -1;
+	}
+	lv_obj_set_style_bg_opa(circle_ring_obj, LV_OPA_TRANSP, 0);
+	lv_obj_set_style_border_width(circle_ring_obj, 2, 0);
+	lv_obj_set_style_border_opa(circle_ring_obj, 220, 0);
+	lv_obj_set_style_radius(circle_ring_obj, LV_RADIUS_CIRCLE, 0);
+	lv_obj_set_style_shadow_width(circle_ring_obj, 8, 0);
+	lv_obj_set_style_shadow_spread(circle_ring_obj, 1, 0);
+	lv_obj_set_style_shadow_opa(circle_ring_obj, 130, 0);
+	lv_obj_clear_flag(circle_ring_obj, LV_OBJ_FLAG_SCROLLABLE);
+
+	for (uint8_t i = 0; i < EQ_BAR_COUNT; i++) {
+		circle_line[i] = lv_line_create(screen);
+		if (circle_line[i] == NULL) {
+			return -1;
+		}
+
+		lv_obj_set_size(circle_line[i], screen_w, screen_h);
+		lv_obj_set_pos(circle_line[i], 0, 0);
+		lv_obj_set_style_bg_opa(circle_line[i], LV_OPA_TRANSP, 0);
+		lv_obj_set_style_border_width(circle_line[i], 0, 0);
+		lv_obj_set_style_line_width(circle_line[i], 3, 0);
+		lv_obj_set_style_line_rounded(circle_line[i], true, 0);
+		lv_obj_set_style_line_opa(circle_line[i], LV_OPA_COVER, 0);
+		lv_obj_clear_flag(circle_line[i], LV_OBJ_FLAG_SCROLLABLE);
+
+		circle_points[i][0].x = screen_w / 2;
+		circle_points[i][0].y = screen_h / 2;
+		circle_points[i][1].x = screen_w / 2;
+		circle_points[i][1].y = screen_h / 2;
+		lv_line_set_points(circle_line[i], circle_points[i], 2);
+	}
+
 	/* Subtle global dim so the screen isn't blinding. */
 	lv_obj_t *dim = lv_obj_create(screen);
 	if (dim == NULL) {
@@ -1054,6 +1282,7 @@ static int create_eq_ui(void)
 	update_progress_line();
 	set_header_long_mode(false);
 	refresh_header_text(true);
+	set_visual_mode(VIS_MODE_BARS);
 
 	return 0;
 }
@@ -1209,28 +1438,31 @@ static void update_eq_frame(uint32_t dt_ms)
 			flash_h = slot_h_px;
 		}
 
-		lv_obj_set_height(eq_fill[i], fill_h);
-		lv_obj_align(eq_fill[i], LV_ALIGN_BOTTOM_MID, 0, 0);
-		if (eq_flash[i] != NULL) {
-			lv_obj_set_height(eq_flash[i], flash_h);
-			lv_obj_align(eq_flash[i], LV_ALIGN_BOTTOM_MID, 0, 0);
-		}
-		if (eq_cap[i] != NULL) {
-			cap_y = (lv_coord_t)(
-				slot_h_px -
-				(lv_coord_t)(((cap_level_fp >> FP_SHIFT) * slot_h_px * EQ_VISUAL_HEIGHT_PCT) / (EQ_MAX_LEVEL * 100)) -
-				PEAK_CAP_H
-			);
-			if (cap_y < 0) {
-				cap_y = 0;
+		if (active_visual_mode == VIS_MODE_BARS) {
+			lv_obj_set_height(eq_fill[i], fill_h);
+			lv_obj_align(eq_fill[i], LV_ALIGN_BOTTOM_MID, 0, 0);
+			if (eq_flash[i] != NULL) {
+				lv_obj_set_height(eq_flash[i], flash_h);
+				lv_obj_align(eq_flash[i], LV_ALIGN_BOTTOM_MID, 0, 0);
 			}
-			if (cap_y > (slot_h_px - PEAK_CAP_H)) {
-				cap_y = slot_h_px - PEAK_CAP_H;
+			if (eq_cap[i] != NULL) {
+				cap_y = (lv_coord_t)(
+					slot_h_px -
+					(lv_coord_t)(((cap_level_fp >> FP_SHIFT) * slot_h_px * EQ_VISUAL_HEIGHT_PCT) / (EQ_MAX_LEVEL * 100)) -
+					PEAK_CAP_H
+				);
+				if (cap_y < 0) {
+					cap_y = 0;
+				}
+				if (cap_y > (slot_h_px - PEAK_CAP_H)) {
+					cap_y = slot_h_px - PEAK_CAP_H;
+				}
+				lv_obj_set_y(eq_cap[i], cap_y);
 			}
-			lv_obj_set_y(eq_cap[i], cap_y);
 		}
 	}
 
+	update_circle_visual();
 	update_progress_line();
 }
 
@@ -1255,6 +1487,7 @@ int main(void)
 	setup_mode_button();
 	setup_scene_button();
 	setup_pause_button();
+	setup_viz_button();
 
 	struct display_capabilities caps;
 	display_get_capabilities(display_dev, &caps);
@@ -1300,6 +1533,15 @@ int main(void)
 			}
 			refresh_header_text(true);
 		}
+		if (viz_toggle_pending) {
+			viz_toggle_pending = false;
+			active_visual_mode = (active_visual_mode + 1U) % VIS_MODE_COUNT;
+			set_visual_mode(active_visual_mode);
+			printk(
+				"Visualizer: %s\\n",
+				(active_visual_mode == VIS_MODE_CIRCLE) ? "circle" : "bars"
+			);
+		}
 
 		int64_t now = k_uptime_get();
 		if (now >= next_render) {
@@ -1319,7 +1561,7 @@ int main(void)
 			update_eq_frame(dt_ms);
 			refresh_header_text(false);
 			last_render = now;
-			next_render = now + EQ_RENDER_MS;
+			next_render = now + ((active_visual_mode == VIS_MODE_CIRCLE) ? 12 : EQ_RENDER_MS);
 		}
 
 		lv_timer_handler();
