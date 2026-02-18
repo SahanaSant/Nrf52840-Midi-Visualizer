@@ -3,83 +3,94 @@
 #include <zephyr/device.h>
 #include <zephyr/drivers/display.h>
 #include <zephyr/sys/printk.h>
+#include <stdint.h>
 #include <lvgl.h>
 
-#include "BTN.h"
-#include "LED.h"
-#include <lv_data_obj.h>
-
-#define SLEEP_MS 1
+#define APP_TICK_MS 5
+#define UI_UPDATE_MS 200
 
 #if DT_HAS_CHOSEN(zephyr_display)
 static const struct device *display_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_display));
 #else
 static const struct device *display_dev;
 #endif
-static lv_obj_t *screen = NULL; 
 
-void lv_button_callback(lv_event_t *event){
-  lv_obj_t *data_obj = (lv_obj_t *)lv_event_get_user_data(event); 
-  led_id led = *(led_id *)lv_data_obj_get_data_ptr(data_obj); 
+static lv_obj_t *bg_panel;
+static lv_obj_t *counter_label;
+static uint32_t frame_count;
 
-  LED_toggle(led); 
+static void ui_step(void)
+{
+	char text[24];
+	bool odd = (frame_count & 1U) != 0U;
+
+	frame_count++;
+	snprintk(text, sizeof(text), "FRAME %u", frame_count);
+	lv_label_set_text(counter_label, text);
+	lv_obj_center(counter_label);
+
+	if (odd) {
+		lv_obj_set_style_bg_color(bg_panel, lv_color_hex(0x0A1F44), 0);
+		lv_obj_set_style_text_color(counter_label, lv_color_hex(0xF7F9FF), 0);
+	} else {
+		lv_obj_set_style_bg_color(bg_panel, lv_color_hex(0xFFE066), 0);
+		lv_obj_set_style_text_color(counter_label, lv_color_hex(0x111111), 0);
+	}
+
+	lv_obj_invalidate(lv_screen_active());
 }
 
-int main(void) {
+static void create_ui(void)
+{
+	lv_obj_t *screen = lv_screen_active();
+
+	lv_obj_set_style_bg_opa(screen, LV_OPA_COVER, 0);
+	lv_obj_set_style_bg_color(screen, lv_color_hex(0x000000), 0);
+	lv_obj_set_style_pad_all(screen, 0, 0);
+
+	bg_panel = lv_obj_create(screen);
+	lv_obj_set_size(bg_panel, LV_PCT(100), LV_PCT(100));
+	lv_obj_center(bg_panel);
+	lv_obj_set_style_border_width(bg_panel, 0, 0);
+	lv_obj_set_style_radius(bg_panel, 0, 0);
+	lv_obj_set_style_pad_all(bg_panel, 0, 0);
+	lv_obj_set_style_bg_opa(bg_panel, LV_OPA_COVER, 0);
+	lv_obj_set_style_bg_color(bg_panel, lv_color_hex(0x0A1F44), 0);
+	lv_obj_clear_flag(bg_panel, LV_OBJ_FLAG_SCROLLABLE);
+
+	counter_label = lv_label_create(bg_panel);
+	lv_label_set_text(counter_label, "FRAME 0");
+	lv_obj_set_style_text_color(counter_label, lv_color_hex(0xF7F9FF), 0);
+	lv_obj_center(counter_label);
+}
+
+int main(void)
+{
 #if !DT_HAS_CHOSEN(zephyr_display)
-  printk("No zephyr,display chosen node in devicetree\n");
-  return 0;
+	printk("No zephyr,display chosen node in devicetree\\n");
+	return 0;
 #endif
 
-  if(!device_is_ready(display_dev)) {
-    return 0;
-  }
-  screen = lv_screen_active(); 
-  if(screen == NULL){
-    return 0; 
-  }
+	if (!device_is_ready(display_dev)) {
+		printk("Display device not ready\\n");
+		return 0;
+	}
 
-  if (0 > BTN_init()) {
-    return 0;
-  }
-  if (0 > LED_init()) {
-    return 0;
-  }
+	create_ui();
+	display_blanking_off(display_dev);
 
-    for (uint8_t i = 0; i < NUM_LEDS; i++){
-    lv_obj_t *ui_btn = lv_button_create(screen); 
-    //placing on a 2x2 grid in center, matching orientation of the LEDS
-    lv_obj_align(ui_btn, LV_ALIGN_CENTER, 50 * (i % 2 ? 1 : -1), 20 * (i < 2 ? -1 : 1)); 
-    lv_obj_t *button_label = lv_label_create(ui_btn); 
-    char label_text[10]; 
-    snprintf(label_text, 10, "LED %d", i);
-    lv_label_set_text(button_label, label_text);
-    lv_obj_align(button_label, LV_ALIGN_CENTER, 0, 0);  
+	int64_t next_update = k_uptime_get();
 
-    led_id led = (led_id)i; 
-    lv_obj_t *data_obj = lv_data_obj_create_alloc_assign(ui_btn, &led, sizeof(led_id)); 
-    lv_obj_add_event_cb(ui_btn, lv_button_callback, LV_EVENT_CLICKED, data_obj); 
-  }
+	while (1) {
+		int64_t now = k_uptime_get();
+		if (now >= next_update) {
+			ui_step();
+			next_update = now + UI_UPDATE_MS;
+		}
 
-/*
-  // For writing Hello World
+		lv_timer_handler();
+		k_msleep(APP_TICK_MS);
+	}
 
-  lv_obj_t *label = lv_label_create(screen);
-  lv_label_set_text(label, "Hello World!"); 
-*/
-
-
-  display_blanking_off(display_dev);
-  while(1) {
-    for (uint8_t i = 0; i < NUM_BTNS && i < NUM_LEDS; i++) {
-      if (BTN_check_clear_pressed((btn_id)i)) {
-        LED_toggle((led_id)i);
-      }
-    }
-
-    lv_timer_handler(); 
-    k_msleep(SLEEP_MS); 
-
-  }
-  	return 0;
+	return 0;
 }

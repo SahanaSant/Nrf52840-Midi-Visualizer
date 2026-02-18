@@ -1,5 +1,55 @@
+cmake:
+  application:
+    configuration-dir: 'C:/Users/sahan/zephyr-projects/Nrf52840-Midi-Visualizer/Nrf52840-Midi-Visualizer'
+    source-dir: 'C:/Users/sahan/zephyr-projects/Nrf52840-Midi-Visualizer/Nrf52840-Midi-Visualizer'
+  board:
+    name: 'nrf52840dk'
+    path:
+     - 'C:/Users/sahan/zephyr-projects/zephyr/boards/nordic/nrf52840dk'
+    qualifiers: 'nrf52840'
+    revision: ''
+  devicetree:
+    bindings-dirs:
+     - 'C:/Users/sahan/zephyr-projects/zephyr/dts/bindings'
+    files:
+     - 'C:/Users/sahan/zephyr-projects/zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840.dts'
+     - 'C:/Users/sahan/zephyr-projects/zephyr/boards/shields/adafruit_2_8_tft_touch_v2/adafruit_2_8_tft_touch_v2.overlay'
+     - 'C:/Users/sahan/zephyr-projects/Nrf52840-Midi-Visualizer/Nrf52840-Midi-Visualizer/boards/nrf52840dk_nrf52840.overlay'
+    include-dirs:
+     - 'C:/Users/sahan/zephyr-projects/zephyr/boards/shields/adafruit_2_8_tft_touch_v2/dts'
+     - 'C:/Users/sahan/zephyr-projects/zephyr/include'
+     - 'C:/Users/sahan/zephyr-projects/zephyr/include/zephyr'
+     - 'C:/Users/sahan/zephyr-projects/zephyr/dts/common'
+     - 'C:/Users/sahan/zephyr-projects/zephyr/dts/vendor'
+     - 'C:/Users/sahan/zephyr-projects/zephyr/dts/rx'
+     - 'C:/Users/sahan/zephyr-projects/zephyr/dts/x86'
+     - 'C:/Users/sahan/zephyr-projects/zephyr/dts/xtensa'
+     - 'C:/Users/sahan/zephyr-projects/zephyr/dts/sparc'
+     - 'C:/Users/sahan/zephyr-projects/zephyr/dts/riscv'
+     - 'C:/Users/sahan/zephyr-projects/zephyr/dts/posix'
+     - 'C:/Users/sahan/zephyr-projects/zephyr/dts/arm64'
+     - 'C:/Users/sahan/zephyr-projects/zephyr/dts/arm'
+     - 'C:/Users/sahan/zephyr-projects/zephyr/dts/arc'
+     - 'C:/Users/sahan/zephyr-projects/zephyr/dts'
+    user-files:
+     - 'C:/Users/sahan/zephyr-projects/Nrf52840-Midi-Visualizer/Nrf52840-Midi-Visualizer/boards/nrf52840dk_nrf52840.overlay'
+  kconfig:
+    files:
+     - 'C:/Users/sahan/zephyr-projects/zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840_defconfig'
+     - 'C:/Users/sahan/zephyr-projects/Nrf52840-Midi-Visualizer/Nrf52840-Midi-Visualizer/prj.conf'
+    user-files:
+     - 'C:/Users/sahan/zephyr-projects/Nrf52840-Midi-Visualizer/Nrf52840-Midi-Visualizer/prj.conf'
+  toolchain:
+    name: 'zephyr'
+    path: 'C:/Users/sahan/zephyr-sdk-0.17.2'
+  vendor-specific:
+    nordic:
+      svdfile: 'C:/Users/sahan/zephyr-projects/modules/hal/nordic/nrfx/mdk/nrf52840.svd'
+  zephyr:
+    version: '4.2.0'
+    zephyr-base: 'C:/Users/sahan/zephyr-projects/zephyr'
+version: '0.1.0'
 west:
-  command: C:\Users\sahan\zephyr-projects\.venv\Scripts\west build -b nrf52840dk/nrf52840
-    --shield=adafruit_2_8_tft_touch_v2 -p always
-  topdir: C:\Users\sahan\zephyr-projects
-  version: 1.4.0
+  command: 'C:\Users\sahan\zephyr-projects\.venv\Scripts\west build -p always -b nrf52840dk/nrf52840 c:\Users\sahan\zephyr-projects\Nrf52840-Midi-Visualizer\Nrf52840-Midi-Visualizer -d c:\Users\sahan\zephyr-projects\Nrf52840-Midi-Visualizer\Nrf52840-Midi-Visualizer\build -- -DSHIELD=adafruit_2_8_tft_touch_v2'
+  topdir: 'c:\Users\sahan\zephyr-projects'
+  version: '1.4.0'
