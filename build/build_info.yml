@@ -13,7 +13,10 @@ cmake:
      - 'C:/Users/sahan/zephyr-projects/zephyr/dts/bindings'
     files:
      - 'C:/Users/sahan/zephyr-projects/zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840.dts'
+     - 'C:/Users/sahan/zephyr-projects/zephyr/boards/shields/adafruit_2_8_tft_touch_v2/adafruit_2_8_tft_touch_v2.overlay'
+     - 'C:/Users/sahan/zephyr-projects/Nrf52840-Midi-Visualizer/Nrf52840-Midi-Visualizer/boards/nrf52840dk_nrf52840.overlay'
     include-dirs:
+     - 'C:/Users/sahan/zephyr-projects/zephyr/boards/shields/adafruit_2_8_tft_touch_v2/dts'
      - 'C:/Users/sahan/zephyr-projects/zephyr/include'
      - 'C:/Users/sahan/zephyr-projects/zephyr/include/zephyr'
      - 'C:/Users/sahan/zephyr-projects/zephyr/dts/common'
@@ -28,6 +31,8 @@ cmake:
      - 'C:/Users/sahan/zephyr-projects/zephyr/dts/arm'
      - 'C:/Users/sahan/zephyr-projects/zephyr/dts/arc'
      - 'C:/Users/sahan/zephyr-projects/zephyr/dts'
+    user-files:
+     - 'C:/Users/sahan/zephyr-projects/Nrf52840-Midi-Visualizer/Nrf52840-Midi-Visualizer/boards/nrf52840dk_nrf52840.overlay'
   kconfig:
     files:
      - 'C:/Users/sahan/zephyr-projects/zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840_defconfig'
@@ -45,6 +50,6 @@ cmake:
     zephyr-base: 'C:/Users/sahan/zephyr-projects/zephyr'
 version: '0.1.0'
 west:
-  command: 'C:\Users\sahan\zephyr-projects\.venv\Scripts\west build -b nrf52840dk/nrf52840 -p always .'
+  command: 'C:\Users\sahan\zephyr-projects\.venv\Scripts\west build -b nrf52840dk/nrf52840 --shield=adafruit_2_8_tft_touch_v2 -p always'
   topdir: 'C:\Users\sahan\zephyr-projects'
   version: '1.4.0'

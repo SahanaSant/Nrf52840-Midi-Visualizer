@@ -60,6 +60,7 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("C:/Users/sahan/zephyr-projects/Nrf52840-Midi-Visualizer/Nrf52840-Midi-Visualizer/build/zephyr/subsys/testsuite/cmake_install.cmake")
   include("C:/Users/sahan/zephyr-projects/Nrf52840-Midi-Visualizer/Nrf52840-Midi-Visualizer/build/zephyr/subsys/tracing/cmake_install.cmake")
   include("C:/Users/sahan/zephyr-projects/Nrf52840-Midi-Visualizer/Nrf52840-Midi-Visualizer/build/zephyr/subsys/usb/cmake_install.cmake")
+  include("C:/Users/sahan/zephyr-projects/Nrf52840-Midi-Visualizer/Nrf52840-Midi-Visualizer/build/zephyr/subsys/input/cmake_install.cmake")
 
 endif()
 

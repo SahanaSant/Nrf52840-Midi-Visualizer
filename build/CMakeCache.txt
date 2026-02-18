@@ -48,7 +48,7 @@ BYPRODUCT_KERNEL_HEX_NAME:FILEPATH=C:/Users/sahan/zephyr-projects/Nrf52840-Midi-
 CACHED_BOARD:STRING=nrf52840dk/nrf52840
 
 //Selected shield
-CACHED_SHIELD:STRING=
+CACHED_SHIELD:STRING=adafruit_2_8_tft_touch_v2
 
 //Selected snippet
 CACHED_SNIPPET:STRING=
@@ -328,7 +328,7 @@ DTC:FILEPATH=C:/Users/sahan/AppData/Local/Microsoft/WinGet/Packages/oss-winget.d
 // parameter. These settings will override the settings in the
 // board's .dts file. Multiple files may be listed, e.g. DTC_OVERLAY_FILE="dts1.overlay
 // dts2.overlay"
-DTC_OVERLAY_FILE:STRING=
+DTC_OVERLAY_FILE:STRING=C:/Users/sahan/zephyr-projects/Nrf52840-Midi-Visualizer/Nrf52840-Midi-Visualizer/boards/nrf52840dk_nrf52840.overlay
 
 //Path to a program.
 GEN_KOBJECT_LIST:FILEPATH=C:/Users/sahan/zephyr-projects/zephyr/scripts/build/gen_kobject_list.py
@@ -359,6 +359,9 @@ PTY_INTERFACE:FILEPATH=C:/Program Files/Git/usr/bin/winpty.exe
 
 //Path to a program.
 PUNCOVER:FILEPATH=PUNCOVER-NOTFOUND
+
+//Selected shield
+SHIELD:STRING=adafruit_2_8_tft_touch_v2
 
 //Path to the SoC directory.
 SOC_FULL_DIR:PATH=C:/Users/sahan/zephyr-projects/zephyr/soc/nordic
@@ -544,7 +547,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=92
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=99
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP

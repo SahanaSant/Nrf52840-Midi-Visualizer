@@ -1279,4 +1279,132 @@ zephyr_udc0: &usbd {
  };
 };
 # 0 "<command-line>" 2
+# 1 "C:/Users/sahan/zephyr-projects/zephyr/boards/shields/adafruit_2_8_tft_touch_v2/adafruit_2_8_tft_touch_v2.overlay" 1
+
+
+
+
+
+
+# 1 "C:/Users/sahan/zephyr-projects/zephyr/boards/shields/adafruit_2_8_tft_touch_v2/dts/adafruit_2_8_tft_touch_v2.dtsi" 1 3 4
+
+
+
+
+
+
+# 1 "C:/Users/sahan/zephyr-projects/zephyr/include/zephyr/dt-bindings/display/ili9xxx.h" 1 3 4
+# 8 "C:/Users/sahan/zephyr-projects/zephyr/boards/shields/adafruit_2_8_tft_touch_v2/dts/adafruit_2_8_tft_touch_v2.dtsi" 2 3 4
+
+/ {
+ chosen {
+  zephyr,display = &adafruit_2_8_tft_touch_v2_ili9340;
+  zephyr,touch = &ft5336_adafruit_2_8_tft_touch_v2;
+ };
+
+ lvgl_pointer {
+  compatible = "zephyr,lvgl-pointer-input";
+  input = <&ft5336_adafruit_2_8_tft_touch_v2>;
+  swap-xy;
+  invert-x;
+  invert-y;
+ };
+
+ adafruit_2_8_tft_touch_v2_mipi_dbi: adafruit_2_8_tft_touch_v2_mipi_dbi {
+  compatible = "zephyr,mipi-dbi-spi";
+  spi-dev = <&arduino_spi>;
+  dc-gpios = <&arduino_header 15 (0 << 0)>;
+  write-only;
+  #address-cells = <1>;
+  #size-cells = <0>;
+
+  adafruit_2_8_tft_touch_v2_ili9340: ili9340@0 {
+   compatible = "ilitek,ili9340";
+   mipi-max-frequency = <15151515>;
+   reg = <0>;
+   width = <320>;
+   height = <240>;
+   pixel-format = <1U>;
+   rotation = <90>;
+   frmctr1 = [00 18];
+   pwctrl1 = [23 00];
+   vmctrl1 = [3e 28];
+   vmctrl2 = [86];
+   pgamctrl = [0f 31 2b 0c 0e 08 4e f1 37 07 10 03 0e 09 00];
+   ngamctrl = [00 0e 14 03 11 07 31 c1 48 08 0f 0c 31 36 0f];
+  };
+ };
+};
+
+&arduino_spi {
+ status = "okay";
+ cs-gpios = <&arduino_header 16 (1 << 0)>,
+     <&arduino_header 10 (1 << 0)>;
+
+ adafruit_2_8_tft_touch_v2_sdhc: sdhc@1 {
+  compatible = "zephyr,sdhc-spi-slot";
+  reg = <1>;
+  status = "okay";
+  spi-max-frequency = <24000000>;
+  mmc {
+   compatible = "zephyr,sdmmc-disk";
+   disk-name = "SD";
+   status = "okay";
+  };
+ };
+};
+
+&arduino_i2c {
+ ft5336_adafruit_2_8_tft_touch_v2: ft5336@38 {
+  compatible = "focaltech,ft5336";
+  reg = <0x38>;
+
+
+ };
+};
+# 8 "C:/Users/sahan/zephyr-projects/zephyr/boards/shields/adafruit_2_8_tft_touch_v2/adafruit_2_8_tft_touch_v2.overlay" 2
+# 0 "<command-line>" 2
+# 1 "C:/Users/sahan/zephyr-projects/Nrf52840-Midi-Visualizer/Nrf52840-Midi-Visualizer/boards/nrf52840dk_nrf52840.overlay" 1
+/ {
+    pwmleds {
+        compatible = "pwm-leds";
+        pwm_led0: pwm_led_0 { pwms = <&pwm0 0 (((20) * 1000UL) * 1000UL) (0 << 0)>; label = "PWM LED 0"; };
+        pwm_led1: pwm_led_1 { pwms = <&pwm0 1 (((20) * 1000UL) * 1000UL) (0 << 0)>; label = "PWM LED 1"; };
+        pwm_led2: pwm_led_2 { pwms = <&pwm0 2 (((20) * 1000UL) * 1000UL) (0 << 0)>; label = "PWM LED 2"; };
+        pwm_led3: pwm_led_3 { pwms = <&pwm0 3 (((20) * 1000UL) * 1000UL) (0 << 0)>; label = "PWM LED 3"; };
+    };
+
+    aliases {
+    pwm-led0 = &pwm_led0;
+    pwm-led1 = &pwm_led1;
+    pwm-led2 = &pwm_led2;
+    pwm-led3 = &pwm_led3;
+    };
+
+};
+
+&pinctrl {
+    pwm0_default: pwm0_default {
+        group1 {
+            psels =
+                <((((((0) * 32U) + (13)) & 0x1FFU) << 0U) | ((22U & 0xFFU) << 24U))>,
+                <((((((0) * 32U) + (14)) & 0x1FFU) << 0U) | ((23U & 0xFFU) << 24U))>,
+                <((((((0) * 32U) + (15)) & 0x1FFU) << 0U) | ((24U & 0xFFU) << 24U))>,
+                <((((((0) * 32U) + (16)) & 0x1FFU) << 0U) | ((25U & 0xFFU) << 24U))>;
+            nordic,invert;
+        };
+    };
+
+    pwm0_sleep: pwm0_sleep {
+        group1 {
+            psels =
+                <((((((0) * 32U) + (13)) & 0x1FFU) << 0U) | ((22U & 0xFFU) << 24U))>,
+                <((((((0) * 32U) + (14)) & 0x1FFU) << 0U) | ((23U & 0xFFU) << 24U))>,
+                <((((((0) * 32U) + (15)) & 0x1FFU) << 0U) | ((24U & 0xFFU) << 24U))>,
+                <((((((0) * 32U) + (16)) & 0x1FFU) << 0U) | ((25U & 0xFFU) << 24U))>;
+            low-power-enable;
+        };
+    };
+};
+# 0 "<command-line>" 2
 # 1 "C:/Users/sahan/zephyr-projects/zephyr/misc/empty_file.c"

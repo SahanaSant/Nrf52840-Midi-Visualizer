@@ -1,3 +1,5 @@
+C:\Users\sahan\zephyr-projects\Nrf52840-Midi-Visualizer\Nrf52840-Midi-Visualizer\Kconfig
+C:\Users\sahan\zephyr-projects\Nrf52840-Midi-Visualizer\Nrf52840-Midi-Visualizer\VERSION
 C:\Users\sahan\zephyr-projects\Nrf52840-Midi-Visualizer\Nrf52840-Midi-Visualizer\build\Kconfig\Kconfig.dts
 C:\Users\sahan\zephyr-projects\Nrf52840-Midi-Visualizer\Nrf52840-Midi-Visualizer\build\Kconfig\Kconfig.modules
 C:\Users\sahan\zephyr-projects\Nrf52840-Midi-Visualizer\Nrf52840-Midi-Visualizer\build\Kconfig\arch\Kconfig
@@ -10,7 +12,6 @@ C:\Users\sahan\zephyr-projects\Nrf52840-Midi-Visualizer\Nrf52840-Midi-Visualizer
 C:\Users\sahan\zephyr-projects\eie_nrf52840.git\Kconfig
 C:\Users\sahan\zephyr-projects\modules\lib\gui\lvgl\Kconfig
 C:\Users\sahan\zephyr-projects\modules\lib\gui\lvgl\zephyr\Kconfig
-C:\Users\sahan\zephyr-projects\zephyr\Kconfig
 C:\Users\sahan\zephyr-projects\zephyr\Kconfig.constants
 C:\Users\sahan\zephyr-projects\zephyr\Kconfig.zephyr
 C:\Users\sahan\zephyr-projects\zephyr\arch\Kconfig
