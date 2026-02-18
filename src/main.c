@@ -4,6 +4,8 @@
 #include <zephyr/drivers/display.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/sys/printk.h>
+#include <zephyr/sys/util.h>
+#include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <lvgl.h>
@@ -33,6 +35,7 @@
 #define BG_IMAGE_OPA 190
 #define BG_VEIL_OPA 90
 #define SCREEN_DIM_OPA LV_OPA_TRANSP
+#define MODE_BUTTON_DEBOUNCE_MS 180
 
 #if HAVE_MIDI_EQ_DATA && (MIDI_EQ_BAR_COUNT != EQ_BAR_COUNT)
 #error "MIDI_EQ_BAR_COUNT must match EQ_BAR_COUNT"
@@ -75,17 +78,37 @@ static const struct gpio_dt_spec status_led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), g
 #define HAVE_STATUS_LED 0
 #endif
 
+#if DT_NODE_HAS_STATUS(DT_ALIAS(sw0), okay)
+static const struct gpio_dt_spec mode_button = GPIO_DT_SPEC_GET(DT_ALIAS(sw0), gpios);
+#define HAVE_MODE_BUTTON 1
+#else
+#define HAVE_MODE_BUTTON 0
+#endif
+
 static lv_obj_t *eq_slot[EQ_BAR_COUNT];
 static lv_obj_t *eq_fill[EQ_BAR_COUNT];
+static lv_obj_t *title_glow_label;
+static lv_obj_t *title_label;
 static int32_t eq_level_fp[EQ_BAR_COUNT];
 static int32_t eq_energy_fp[EQ_BAR_COUNT];
 static lv_coord_t disp_w = 320;
 static lv_coord_t disp_h = 240;
 static lv_coord_t slot_h_px;
 static bool status_led_ready;
+static bool show_elapsed_time;
+static volatile bool mode_toggle_pending;
 static uint32_t prng_state = 0xA5A5F00DU;
 static uint32_t midi_frame_cursor;
 static uint32_t midi_frame_elapsed_ms;
+static uint32_t midi_song_elapsed_ms;
+static uint32_t last_displayed_second = UINT32_MAX;
+static uint32_t playback_start_ms;
+static int64_t mode_button_last_press_ms;
+static char header_text_buf[24];
+
+#if HAVE_MODE_BUTTON
+static struct gpio_callback mode_button_cb_data;
+#endif
 
 static uint32_t blend_hex(uint32_t a, uint32_t b, uint8_t t)
 {
@@ -217,11 +240,139 @@ static uint32_t prng_next(void)
 	return prng_state;
 }
 
-static void excite_energy(void)
+static uint32_t playback_elapsed_ms(void)
 {
+#if HAVE_MIDI_EQ_DATA
+	const uint32_t total_song_ms = MIDI_EQ_FRAME_COUNT * MIDI_EQ_FRAME_MS;
+	uint32_t elapsed_ms = k_uptime_get_32() - playback_start_ms;
+
+	if (total_song_ms == 0U) {
+		return elapsed_ms;
+	}
+	return elapsed_ms % total_song_ms;
+#else
+	return k_uptime_get_32() - playback_start_ms;
+#endif
+}
+
+static void set_header_long_mode(bool elapsed_time_mode)
+{
+	if (title_glow_label == NULL || title_label == NULL) {
+		return;
+	}
+
+	if (elapsed_time_mode) {
+		lv_label_set_long_mode(title_glow_label, LV_LABEL_LONG_MODE_CLIP);
+		lv_label_set_long_mode(title_label, LV_LABEL_LONG_MODE_CLIP);
+	} else {
+		lv_label_set_long_mode(title_glow_label, LV_LABEL_LONG_MODE_SCROLL_CIRCULAR);
+		lv_label_set_long_mode(title_label, LV_LABEL_LONG_MODE_SCROLL_CIRCULAR);
+	}
+}
+
+static void set_header_text(const char *text)
+{
+	if (title_glow_label != NULL) {
+		lv_label_set_text(title_glow_label, text);
+		lv_obj_invalidate(title_glow_label);
+	}
+	if (title_label != NULL) {
+		lv_label_set_text(title_label, text);
+		lv_obj_invalidate(title_label);
+	}
+}
+
+static void refresh_header_text(bool force)
+{
+	if ((title_glow_label == NULL) || (title_label == NULL)) {
+		return;
+	}
+
+	if (!show_elapsed_time) {
+		if (force) {
+			set_header_text(EQ_UI_TITLE);
+		}
+		last_displayed_second = UINT32_MAX;
+		return;
+	}
+
+	uint32_t elapsed_sec = playback_elapsed_ms() / 1000U;
+	if (!force && (elapsed_sec == last_displayed_second)) {
+		return;
+	}
+	last_displayed_second = elapsed_sec;
+
+	(void)snprintf(
+		header_text_buf,
+		sizeof(header_text_buf),
+		"%02u:%02u",
+		(unsigned int)(elapsed_sec / 60U),
+		(unsigned int)(elapsed_sec % 60U)
+	);
+	set_header_text(header_text_buf);
+}
+
+#if HAVE_MODE_BUTTON
+static void mode_button_isr(
+	const struct device *port,
+	struct gpio_callback *cb,
+	uint32_t pins
+)
+{
+	ARG_UNUSED(port);
+	ARG_UNUSED(cb);
+	ARG_UNUSED(pins);
+
+	int64_t now = k_uptime_get();
+	if ((now - mode_button_last_press_ms) < MODE_BUTTON_DEBOUNCE_MS) {
+		return;
+	}
+	mode_button_last_press_ms = now;
+	mode_toggle_pending = true;
+}
+#endif
+
+static void setup_mode_button(void)
+{
+#if HAVE_MODE_BUTTON
+	if (!gpio_is_ready_dt(&mode_button)) {
+		printk("Mode button not ready\\n");
+		return;
+	}
+	if (gpio_pin_configure_dt(&mode_button, GPIO_INPUT) != 0) {
+		printk("Mode button config failed\\n");
+		return;
+	}
+	if (gpio_pin_interrupt_configure_dt(&mode_button, GPIO_INT_EDGE_TO_ACTIVE) != 0) {
+		printk("Mode button interrupt setup failed\\n");
+		return;
+	}
+	gpio_init_callback(&mode_button_cb_data, mode_button_isr, BIT(mode_button.pin));
+	if (gpio_add_callback(mode_button.port, &mode_button_cb_data) != 0) {
+		printk("Mode button callback add failed\\n");
+	}
+#endif
+}
+
+static void excite_energy(uint32_t dt_ms)
+{
+	ARG_UNUSED(dt_ms);
 	int32_t max_fp = EQ_MAX_LEVEL * FP_ONE;
 
 #if HAVE_MIDI_EQ_DATA
+	{
+		uint32_t elapsed_ms = playback_elapsed_ms();
+		uint32_t frame_cursor = elapsed_ms / MIDI_EQ_FRAME_MS;
+
+		if (frame_cursor >= MIDI_EQ_FRAME_COUNT) {
+			frame_cursor = MIDI_EQ_FRAME_COUNT - 1U;
+		}
+
+		midi_song_elapsed_ms = elapsed_ms;
+		midi_frame_cursor = frame_cursor;
+		midi_frame_elapsed_ms = elapsed_ms % MIDI_EQ_FRAME_MS;
+	}
+
 	for (uint8_t i = 0; i < EQ_BAR_COUNT; i++) {
 		int32_t lvl_fp = (int32_t)midi_eq_frames[midi_frame_cursor][i] * FP_ONE;
 		if (lvl_fp > max_fp) {
@@ -231,15 +382,6 @@ static void excite_energy(void)
 			lvl_fp = 0;
 		}
 		eq_energy_fp[i] = lvl_fp;
-	}
-
-	midi_frame_elapsed_ms += EQ_RENDER_MS;
-	while (midi_frame_elapsed_ms >= MIDI_EQ_FRAME_MS) {
-		midi_frame_elapsed_ms -= MIDI_EQ_FRAME_MS;
-		midi_frame_cursor++;
-		if (midi_frame_cursor >= MIDI_EQ_FRAME_COUNT) {
-			midi_frame_cursor = 0;
-		}
 	}
 	return;
 #endif
@@ -301,31 +443,29 @@ static int create_eq_ui(void)
 
 	create_background_layer(screen, screen_w, screen_h);
 
-	lv_obj_t *title_glow = lv_label_create(screen);
-	lv_obj_t *title = lv_label_create(screen);
+	title_glow_label = lv_label_create(screen);
+	title_label = lv_label_create(screen);
 	lv_obj_t *title_line = lv_obj_create(screen);
-	if ((title_glow == NULL) || (title == NULL) || (title_line == NULL)) {
+	if ((title_glow_label == NULL) || (title_label == NULL) || (title_line == NULL)) {
 		return -1;
 	}
 
-	lv_label_set_text(title_glow, EQ_UI_TITLE);
-	lv_obj_set_width(title_glow, screen_w - 10);
-	lv_label_set_long_mode(title_glow, LV_LABEL_LONG_MODE_SCROLL_CIRCULAR);
-	lv_obj_set_style_text_font(title_glow, &lv_font_unscii_16, 0);
-	lv_obj_set_style_text_letter_space(title_glow, 1, 0);
-	lv_obj_set_style_text_align(title_glow, LV_TEXT_ALIGN_CENTER, 0);
-	lv_obj_set_style_text_color(title_glow, lv_color_hex(0x00FFF5), 0);
-	lv_obj_set_style_text_opa(title_glow, 180, 0);
-	lv_obj_align(title_glow, LV_ALIGN_TOP_MID, 1, 4);
+	lv_label_set_text(title_glow_label, EQ_UI_TITLE);
+	lv_obj_set_width(title_glow_label, screen_w - 10);
+	lv_obj_set_style_text_font(title_glow_label, &lv_font_unscii_16, 0);
+	lv_obj_set_style_text_letter_space(title_glow_label, 1, 0);
+	lv_obj_set_style_text_align(title_glow_label, LV_TEXT_ALIGN_CENTER, 0);
+	lv_obj_set_style_text_color(title_glow_label, lv_color_hex(0x00FFF5), 0);
+	lv_obj_set_style_text_opa(title_glow_label, 180, 0);
+	lv_obj_align(title_glow_label, LV_ALIGN_TOP_MID, 1, 4);
 
-	lv_label_set_text(title, EQ_UI_TITLE);
-	lv_obj_set_width(title, screen_w - 10);
-	lv_label_set_long_mode(title, LV_LABEL_LONG_MODE_SCROLL_CIRCULAR);
-	lv_obj_set_style_text_font(title, &lv_font_unscii_16, 0);
-	lv_obj_set_style_text_letter_space(title, 1, 0);
-	lv_obj_set_style_text_align(title, LV_TEXT_ALIGN_CENTER, 0);
-	lv_obj_set_style_text_color(title, lv_color_hex(0xFFFFFF), 0);
-	lv_obj_align(title, LV_ALIGN_TOP_MID, 0, 3);
+	lv_label_set_text(title_label, EQ_UI_TITLE);
+	lv_obj_set_width(title_label, screen_w - 10);
+	lv_obj_set_style_text_font(title_label, &lv_font_unscii_16, 0);
+	lv_obj_set_style_text_letter_space(title_label, 1, 0);
+	lv_obj_set_style_text_align(title_label, LV_TEXT_ALIGN_CENTER, 0);
+	lv_obj_set_style_text_color(title_label, lv_color_hex(0xFFFFFF), 0);
+	lv_obj_align(title_label, LV_ALIGN_TOP_MID, 0, 3);
 
 	lv_obj_set_size(title_line, screen_w - 30, 2);
 	lv_obj_align(title_line, LV_ALIGN_TOP_MID, 0, 26);
@@ -405,14 +545,17 @@ static int create_eq_ui(void)
 	lv_obj_set_style_bg_opa(dim, SCREEN_DIM_OPA, 0);
 	lv_obj_clear_flag(dim, LV_OBJ_FLAG_SCROLLABLE);
 
+	set_header_long_mode(false);
+	refresh_header_text(true);
+
 	return 0;
 }
 
-static void update_eq_frame(void)
+static void update_eq_frame(uint32_t dt_ms)
 {
 	int32_t max_fp = EQ_MAX_LEVEL * FP_ONE;
 
-	excite_energy();
+	excite_energy(dt_ms);
 
 	for (uint8_t i = 0; i < EQ_BAR_COUNT; i++) {
 		int32_t delta = eq_energy_fp[i] - eq_level_fp[i];
@@ -498,6 +641,7 @@ int main(void)
 		printk("Display device not ready\\n");
 		fail_blink_forever(250);
 	}
+	setup_mode_button();
 
 	struct display_capabilities caps;
 	display_get_capabilities(display_dev, &caps);
@@ -510,13 +654,37 @@ int main(void)
 	}
 
 	display_blanking_off(display_dev);
+	playback_start_ms = k_uptime_get_32();
 
 	int64_t next_render = k_uptime_get();
+	int64_t last_render = next_render;
 
 	while (1) {
+		if (mode_toggle_pending) {
+			mode_toggle_pending = false;
+			show_elapsed_time = !show_elapsed_time;
+			set_header_long_mode(show_elapsed_time);
+			refresh_header_text(true);
+		}
+
 		int64_t now = k_uptime_get();
 		if (now >= next_render) {
-			update_eq_frame();
+			uint32_t dt_ms;
+
+			if (now > last_render) {
+				int64_t elapsed = now - last_render;
+
+				if (elapsed > 200) {
+					elapsed = 200;
+				}
+				dt_ms = (uint32_t)elapsed;
+			} else {
+				dt_ms = EQ_RENDER_MS;
+			}
+
+			update_eq_frame(dt_ms);
+			refresh_header_text(false);
+			last_render = now;
 			next_render = now + EQ_RENDER_MS;
 		}
 
