@@ -9,9 +9,12 @@
 #include <lvgl.h>
 
 #define APP_TICK_MS 5
-#define EQ_UPDATE_MS 40
+#define EQ_RENDER_MS 10
 #define EQ_BAR_COUNT 12
 #define EQ_MAX_LEVEL 100
+#define EQ_BASE_LEVEL (EQ_MAX_LEVEL / 3)
+#define FP_SHIFT 8
+#define FP_ONE (1 << FP_SHIFT)
 
 #if DT_HAS_CHOSEN(zephyr_display)
 static const struct device *display_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_display));
@@ -39,9 +42,62 @@ static const struct gpio_dt_spec status_led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), g
 #endif
 
 static lv_obj_t *eq_bar[EQ_BAR_COUNT];
-static uint8_t eq_level[EQ_BAR_COUNT];
+static int32_t eq_level_fp[EQ_BAR_COUNT];
+static int32_t eq_energy_fp[EQ_BAR_COUNT];
 static bool status_led_ready;
 static uint32_t prng_state = 0xA5A5F00DU;
+
+static uint32_t blend_hex(uint32_t a, uint32_t b, uint8_t t)
+{
+	uint32_t inv = 255U - t;
+	uint32_t ar = (a >> 16) & 0xFFU;
+	uint32_t ag = (a >> 8) & 0xFFU;
+	uint32_t ab = a & 0xFFU;
+	uint32_t br = (b >> 16) & 0xFFU;
+	uint32_t bg = (b >> 8) & 0xFFU;
+	uint32_t bb = b & 0xFFU;
+	uint32_t rr = ((ar * inv) + (br * t)) / 255U;
+	uint32_t rg = ((ag * inv) + (bg * t)) / 255U;
+	uint32_t rb = ((ab * inv) + (bb * t)) / 255U;
+
+	return (rr << 16) | (rg << 8) | rb;
+}
+
+static uint32_t darken_hex(uint32_t c, uint8_t amount)
+{
+	uint32_t r = (c >> 16) & 0xFFU;
+	uint32_t g = (c >> 8) & 0xFFU;
+	uint32_t b = c & 0xFFU;
+	uint32_t k = 255U - amount;
+
+	r = (r * k) / 255U;
+	g = (g * k) / 255U;
+	b = (b * k) / 255U;
+
+	return (r << 16) | (g << 8) | b;
+}
+
+static uint32_t palette_hex(uint8_t t)
+{
+	static const uint32_t stops[] = {
+		0x002296U, /* deep blue */
+		0x82008FU, /* violet */
+		0xC0007AU, /* magenta */
+		0xEA0C5FU, /* pink-red */
+		0xFF5341U, /* warm red-orange */
+		0xFF8820U, /* orange */
+		0xF6BA00U  /* yellow */
+	};
+	uint16_t pos = (uint16_t)t * 6U;
+	uint8_t idx = (uint8_t)(pos / 255U);
+	uint8_t frac = (uint8_t)(pos % 255U);
+
+	if (idx >= 6U) {
+		return stops[6];
+	}
+
+	return blend_hex(stops[idx], stops[idx + 1U], frac);
+}
 
 static void status_led_toggle_safe(void)
 {
@@ -66,16 +122,36 @@ static uint32_t prng_next(void)
 	return prng_state;
 }
 
-static uint8_t next_target(uint8_t idx)
+static void excite_energy(void)
 {
-	uint8_t v = (uint8_t)(prng_next() % (EQ_MAX_LEVEL + 1U));
+	int32_t max_fp = EQ_MAX_LEVEL * FP_ONE;
+	int32_t base_fp = EQ_BASE_LEVEL * FP_ONE;
 
-	/* Keep the center bands slightly hotter for a natural fake EQ curve. */
-	if (idx > 2U && idx < (EQ_BAR_COUNT - 3U)) {
-		v = (uint8_t)MIN(EQ_MAX_LEVEL, v + 12U);
+	for (uint8_t i = 0; i < EQ_BAR_COUNT; i++) {
+		/* Pull energy toward the baseline (2/3 screen height). */
+		eq_energy_fp[i] += ((base_fp - eq_energy_fp[i]) * 30) >> 8;
+
+		uint32_t r = prng_next();
+		int32_t kick = (int32_t)((r & 0x3FU) - 31U); /* -31..32 */
+
+		/* Occasional stronger transients. */
+		if ((r & 0x3C0U) >= 0x300U) {
+			kick += (r & 0x400U) ? 26 : -26;
+		}
+
+		/* Keep middle bands slightly more active. */
+		if (i > 2U && i < (EQ_BAR_COUNT - 3U)) {
+			kick = (kick * 11) / 10;
+		}
+
+		eq_energy_fp[i] += kick * (FP_ONE / 5);
+		if (eq_energy_fp[i] > max_fp) {
+			eq_energy_fp[i] = max_fp;
+		}
+		if (eq_energy_fp[i] < 0) {
+			eq_energy_fp[i] = 0;
+		}
 	}
-
-	return v;
 }
 
 static int create_eq_ui(void)
@@ -98,7 +174,9 @@ static int create_eq_ui(void)
 	}
 
 	lv_obj_set_style_bg_opa(screen, LV_OPA_COVER, 0);
-	lv_obj_set_style_bg_color(screen, lv_color_hex(0x0B1119), 0);
+	lv_obj_set_style_bg_color(screen, lv_color_hex(0x060A2A), 0);
+	lv_obj_set_style_bg_grad_color(screen, lv_color_hex(0x2A063B), 0);
+	lv_obj_set_style_bg_grad_dir(screen, LV_GRAD_DIR_VER, 0);
 	lv_obj_set_style_pad_all(screen, 0, 0);
 
 	lv_obj_t *title = lv_label_create(screen);
@@ -108,31 +186,38 @@ static int create_eq_ui(void)
 
 	lv_label_set_text(title, "MIDI EQ DEMO");
 	lv_obj_align(title, LV_ALIGN_TOP_MID, 0, 2);
-	lv_obj_set_style_text_color(title, lv_color_hex(0xD6E2F0), 0);
+	lv_obj_set_style_text_color(title, lv_color_hex(0xFFD66A), 0);
 
 	for (uint8_t i = 0; i < EQ_BAR_COUNT; i++) {
 		lv_obj_t *bar = lv_bar_create(screen);
+		uint8_t t = (uint8_t)((i * 255U) / (EQ_BAR_COUNT - 1U));
+		uint32_t base_hex = palette_hex(t);
+		uint32_t top_hex = blend_hex(base_hex, 0xFFFFFFU, 40U);
+		uint32_t bot_hex = darken_hex(base_hex, 58U);
+		uint32_t slot_hex = darken_hex(base_hex, 175U);
+
 		if (bar == NULL) {
 			return -1;
 		}
 
 		eq_bar[i] = bar;
-		eq_level[i] = 0U;
+		eq_level_fp[i] = EQ_BASE_LEVEL * FP_ONE;
+		eq_energy_fp[i] = EQ_BASE_LEVEL * FP_ONE;
 
 		lv_obj_set_size(bar, bar_w, slot_h);
 		lv_obj_set_pos(bar, side_pad + (i * (bar_w + gap)), top_pad);
 		lv_bar_set_range(bar, 0, EQ_MAX_LEVEL);
-		lv_bar_set_value(bar, 0, LV_ANIM_OFF);
+		lv_bar_set_value(bar, EQ_BASE_LEVEL, LV_ANIM_OFF);
 
 		lv_obj_set_style_border_width(bar, 0, LV_PART_MAIN);
 		lv_obj_set_style_radius(bar, 4, LV_PART_MAIN);
 		lv_obj_set_style_bg_opa(bar, LV_OPA_70, LV_PART_MAIN);
-		lv_obj_set_style_bg_color(bar, lv_color_hex(0x1C2A35), LV_PART_MAIN);
+		lv_obj_set_style_bg_color(bar, lv_color_hex(slot_hex), LV_PART_MAIN);
 
 		lv_obj_set_style_radius(bar, 4, LV_PART_INDICATOR);
 		lv_obj_set_style_bg_opa(bar, LV_OPA_COVER, LV_PART_INDICATOR);
-		lv_obj_set_style_bg_color(bar, lv_color_hex(0x25D34F), LV_PART_INDICATOR);
-		lv_obj_set_style_bg_grad_color(bar, lv_color_hex(0xB3F75F), LV_PART_INDICATOR);
+		lv_obj_set_style_bg_color(bar, lv_color_hex(top_hex), LV_PART_INDICATOR);
+		lv_obj_set_style_bg_grad_color(bar, lv_color_hex(bot_hex), LV_PART_INDICATOR);
 		lv_obj_set_style_bg_grad_dir(bar, LV_GRAD_DIR_VER, LV_PART_INDICATOR);
 	}
 
@@ -141,23 +226,49 @@ static int create_eq_ui(void)
 
 static void update_eq_frame(void)
 {
-	for (uint8_t i = 0; i < EQ_BAR_COUNT; i++) {
-		uint8_t target = next_target(i);
-		uint8_t cur = eq_level[i];
+	int32_t max_fp = EQ_MAX_LEVEL * FP_ONE;
 
-		if (target > cur) {
-			uint8_t up = (uint8_t)(((target - cur) / 2U) + 6U);
-			cur = (uint8_t)MIN(EQ_MAX_LEVEL, cur + up);
+	excite_energy();
+
+	for (uint8_t i = 0; i < EQ_BAR_COUNT; i++) {
+		int32_t delta = eq_energy_fp[i] - eq_level_fp[i];
+		int32_t step;
+
+		if (delta >= 0) {
+			step = (delta * 176) >> 8;
+			if (step < (FP_ONE / 3)) {
+				step = FP_ONE / 3;
+			}
+			if (step > (FP_ONE * 3)) {
+				step = FP_ONE * 3;
+			}
+			eq_level_fp[i] += step;
+			if (eq_level_fp[i] > eq_energy_fp[i]) {
+				eq_level_fp[i] = eq_energy_fp[i];
+			}
 		} else {
-			uint8_t down = (uint8_t)(((cur - target) / 6U) + 2U);
-			cur = (uint8_t)((cur > down) ? (cur - down) : 0U);
+			step = ((-delta) * 46) >> 8;
+			if (step < (FP_ONE / 8)) {
+				step = FP_ONE / 8;
+			}
+			if (step > FP_ONE) {
+				step = FP_ONE;
+			}
+			eq_level_fp[i] -= step;
+			if (eq_level_fp[i] < eq_energy_fp[i]) {
+				eq_level_fp[i] = eq_energy_fp[i];
+			}
 		}
 
-		eq_level[i] = cur;
-		lv_bar_set_value(eq_bar[i], cur, LV_ANIM_OFF);
-	}
+		if (eq_level_fp[i] < 0) {
+			eq_level_fp[i] = 0;
+		}
+		if (eq_level_fp[i] > max_fp) {
+			eq_level_fp[i] = max_fp;
+		}
 
-	status_led_toggle_safe();
+		lv_bar_set_value(eq_bar[i], (int32_t)(eq_level_fp[i] >> FP_SHIFT), LV_ANIM_OFF);
+	}
 
 	lv_obj_invalidate(lv_screen_active());
 }
@@ -188,13 +299,13 @@ int main(void)
 
 	display_blanking_off(display_dev);
 
-	int64_t next_eq = k_uptime_get();
+	int64_t next_render = k_uptime_get();
 
 	while (1) {
 		int64_t now = k_uptime_get();
-		if (now >= next_eq) {
+		if (now >= next_render) {
 			update_eq_frame();
-			next_eq = now + EQ_UPDATE_MS;
+			next_render = now + EQ_RENDER_MS;
 		}
 
 		lv_timer_handler();
