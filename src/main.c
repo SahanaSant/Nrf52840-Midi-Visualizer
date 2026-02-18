@@ -2,6 +2,7 @@
 #include <zephyr/devicetree.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/display.h>
+#include <zephyr/drivers/gpio.h>
 #include <zephyr/sys/printk.h>
 #include <stdint.h>
 #include <lvgl.h>
@@ -19,6 +20,8 @@ static lv_obj_t *bg_panel;
 static lv_obj_t *counter_label;
 static lv_obj_t *beat_box;
 static uint32_t frame_count;
+static bool led_ready;
+static const struct gpio_dt_spec status_led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
 
 static void ui_step(void)
 {
@@ -44,6 +47,10 @@ static void ui_step(void)
 		lv_obj_set_style_text_color(counter_label, lv_color_hex(0x000000), 0);
 		lv_obj_set_style_bg_color(beat_box, lv_color_hex(0x000000), 0);
 		lv_obj_align(beat_box, LV_ALIGN_BOTTOM_RIGHT, -8, -8);
+	}
+
+	if (led_ready) {
+		gpio_pin_toggle_dt(&status_led);
 	}
 
 	lv_obj_invalidate(lv_screen_active());
@@ -91,6 +98,11 @@ int main(void)
 	if (!device_is_ready(display_dev)) {
 		printk("Display device not ready\\n");
 		return 0;
+	}
+
+	if (gpio_is_ready_dt(&status_led) &&
+	    gpio_pin_configure_dt(&status_led, GPIO_OUTPUT_INACTIVE) == 0) {
+		led_ready = true;
 	}
 
 	create_ui();
