@@ -7,7 +7,7 @@
       "operation": {
         "chip_erase_mode": "ERASE_RANGES_TOUCHED_BY_FIRMWARE",
         "firmware": {
-          "file": "Nrf52840-Midi-Visualizer\\build\\zephyr\\zephyr.hex"
+          "file": "build\\zephyr\\zephyr.hex"
         },
         "type": "program",
         "verify": "VERIFY_READ"
