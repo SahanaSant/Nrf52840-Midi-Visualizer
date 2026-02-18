@@ -1,0 +1,4 @@
+"eie_nrf52840.git":"C:/Users/sahan/zephyr-projects/eie_nrf52840.git":"C:/Users/sahan/zephyr-projects/eie_nrf52840.git"
+"cmsis_6":"C:/Users/sahan/zephyr-projects/modules/hal/cmsis_6":"${ZEPHYR_CMSIS_6_CMAKE_DIR}"
+"hal_nordic":"C:/Users/sahan/zephyr-projects/modules/hal/nordic":"${ZEPHYR_HAL_NORDIC_CMAKE_DIR}"
+"lvgl":"C:/Users/sahan/zephyr-projects/modules/lib/gui/lvgl":"${ZEPHYR_LVGL_CMAKE_DIR}"

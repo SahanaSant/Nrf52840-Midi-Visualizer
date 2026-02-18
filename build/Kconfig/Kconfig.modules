@@ -1,0 +1,27 @@
+menu "eie_nrf52840.git (C:/Users/sahan/zephyr-projects/eie_nrf52840.git)"
+osource "C:/Users/sahan/zephyr-projects/eie_nrf52840.git/Kconfig"
+config ZEPHYR_EIE_NRF52840_GIT_MODULE
+	bool
+	default y
+endmenu
+menu "cmsis_6 (C:/Users/sahan/zephyr-projects/modules/hal/cmsis_6)"
+osource "$(ZEPHYR_CMSIS_6_KCONFIG)"
+config ZEPHYR_CMSIS_6_MODULE
+	bool
+	default y
+endmenu
+menu "hal_nordic (C:/Users/sahan/zephyr-projects/modules/hal/nordic)"
+osource "$(ZEPHYR_HAL_NORDIC_KCONFIG)"
+config ZEPHYR_HAL_NORDIC_MODULE
+	bool
+	default y
+
+config ZEPHYR_HAL_NORDIC_MODULE_BLOBS
+	bool
+endmenu
+menu "lvgl (C:/Users/sahan/zephyr-projects/modules/lib/gui/lvgl)"
+osource "C:/Users/sahan/zephyr-projects/modules/lib/gui/lvgl/zephyr/Kconfig"
+config ZEPHYR_LVGL_MODULE
+	bool
+	default y
+endmenu
