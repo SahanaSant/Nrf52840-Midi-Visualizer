@@ -1383,6 +1383,10 @@ zephyr_udc0: &usbd {
 
 };
 
+&adafruit_2_8_tft_touch_v2_ili9340 {
+ rotation = <0>;
+};
+
 &pinctrl {
     pwm0_default: pwm0_default {
         group1 {

@@ -1601,7 +1601,7 @@ set_target_properties(${DEVICETREE_TARGET} PROPERTIES "DT_PROP|/adafruit_2_8_tft
 set_target_properties(${DEVICETREE_TARGET} PROPERTIES "DT_PROP|/adafruit_2_8_tft_touch_v2_mipi_dbi/ili9340@0|pgamctrl" "15;49;43;12;14;8;78;241;55;7;16;3;14;9;0;")
 set_target_properties(${DEVICETREE_TARGET} PROPERTIES "DT_PROP|/adafruit_2_8_tft_touch_v2_mipi_dbi/ili9340@0|ngamctrl" "0;14;20;3;17;7;49;193;72;8;15;12;49;54;15;")
 set_target_properties(${DEVICETREE_TARGET} PROPERTIES "DT_PROP|/adafruit_2_8_tft_touch_v2_mipi_dbi/ili9340@0|pixel-format" "1")
-set_target_properties(${DEVICETREE_TARGET} PROPERTIES "DT_PROP|/adafruit_2_8_tft_touch_v2_mipi_dbi/ili9340@0|rotation" "90")
+set_target_properties(${DEVICETREE_TARGET} PROPERTIES "DT_PROP|/adafruit_2_8_tft_touch_v2_mipi_dbi/ili9340@0|rotation" "0")
 set_target_properties(${DEVICETREE_TARGET} PROPERTIES "DT_PROP|/adafruit_2_8_tft_touch_v2_mipi_dbi/ili9340@0|display-inversion" "False")
 set_target_properties(${DEVICETREE_TARGET} PROPERTIES "DT_PROP|/adafruit_2_8_tft_touch_v2_mipi_dbi/ili9340@0|duplex" "0")
 set_target_properties(${DEVICETREE_TARGET} PROPERTIES "DT_PROP|/adafruit_2_8_tft_touch_v2_mipi_dbi/ili9340@0|mipi-cpol" "False")

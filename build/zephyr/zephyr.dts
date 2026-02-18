@@ -941,8 +941,8 @@
 				psels = < 0x1600000d >,
 				        < 0x1700000e >,
 				        < 0x1800000f >,
-				        < 0x19000010 >; /* in Nrf52840-Midi-Visualizer\Nrf52840-Midi-Visualizer\boards\nrf52840dk_nrf52840.overlay:22 */
-				nordic,invert;          /* in Nrf52840-Midi-Visualizer\Nrf52840-Midi-Visualizer\boards\nrf52840dk_nrf52840.overlay:27 */
+				        < 0x19000010 >; /* in Nrf52840-Midi-Visualizer\Nrf52840-Midi-Visualizer\boards\nrf52840dk_nrf52840.overlay:26 */
+				nordic,invert;          /* in Nrf52840-Midi-Visualizer\Nrf52840-Midi-Visualizer\boards\nrf52840dk_nrf52840.overlay:31 */
 			};
 		};
 
@@ -955,8 +955,8 @@
 				psels = < 0x1600000d >,
 				        < 0x1700000e >,
 				        < 0x1800000f >,
-				        < 0x19000010 >; /* in Nrf52840-Midi-Visualizer\Nrf52840-Midi-Visualizer\boards\nrf52840dk_nrf52840.overlay:33 */
-				low-power-enable;       /* in Nrf52840-Midi-Visualizer\Nrf52840-Midi-Visualizer\boards\nrf52840dk_nrf52840.overlay:38 */
+				        < 0x19000010 >; /* in Nrf52840-Midi-Visualizer\Nrf52840-Midi-Visualizer\boards\nrf52840dk_nrf52840.overlay:37 */
+				low-power-enable;       /* in Nrf52840-Midi-Visualizer\Nrf52840-Midi-Visualizer\boards\nrf52840dk_nrf52840.overlay:42 */
 			};
 		};
 
@@ -1308,13 +1308,13 @@
 			width = < 0x140 >;                                           /* in zephyr\boards\shields\adafruit_2_8_tft_touch_v2\dts\adafruit_2_8_tft_touch_v2.dtsi:35 */
 			height = < 0xf0 >;                                           /* in zephyr\boards\shields\adafruit_2_8_tft_touch_v2\dts\adafruit_2_8_tft_touch_v2.dtsi:36 */
 			pixel-format = < 0x1 >;                                      /* in zephyr\boards\shields\adafruit_2_8_tft_touch_v2\dts\adafruit_2_8_tft_touch_v2.dtsi:37 */
-			rotation = < 0x5a >;                                         /* in zephyr\boards\shields\adafruit_2_8_tft_touch_v2\dts\adafruit_2_8_tft_touch_v2.dtsi:38 */
 			frmctr1 = [ 00 18 ];                                         /* in zephyr\boards\shields\adafruit_2_8_tft_touch_v2\dts\adafruit_2_8_tft_touch_v2.dtsi:39 */
 			pwctrl1 = [ 23 00 ];                                         /* in zephyr\boards\shields\adafruit_2_8_tft_touch_v2\dts\adafruit_2_8_tft_touch_v2.dtsi:40 */
 			vmctrl1 = [ 3E 28 ];                                         /* in zephyr\boards\shields\adafruit_2_8_tft_touch_v2\dts\adafruit_2_8_tft_touch_v2.dtsi:41 */
 			vmctrl2 = [ 86 ];                                            /* in zephyr\boards\shields\adafruit_2_8_tft_touch_v2\dts\adafruit_2_8_tft_touch_v2.dtsi:42 */
 			pgamctrl = [ 0F 31 2B 0C 0E 08 4E F1 37 07 10 03 0E 09 00 ]; /* in zephyr\boards\shields\adafruit_2_8_tft_touch_v2\dts\adafruit_2_8_tft_touch_v2.dtsi:43 */
 			ngamctrl = [ 00 0E 14 03 11 07 31 C1 48 08 0F 0C 31 36 0F ]; /* in zephyr\boards\shields\adafruit_2_8_tft_touch_v2\dts\adafruit_2_8_tft_touch_v2.dtsi:44 */
+			rotation = < 0x0 >;                                          /* in Nrf52840-Midi-Visualizer\Nrf52840-Midi-Visualizer\boards\nrf52840dk_nrf52840.overlay:20 */
 		};
 	};
 };
