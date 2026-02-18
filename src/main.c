@@ -7,7 +7,7 @@
 #include <lvgl.h>
 
 #define APP_TICK_MS 5
-#define UI_UPDATE_MS 200
+#define UI_UPDATE_MS 50
 
 #if DT_HAS_CHOSEN(zephyr_display)
 static const struct device *display_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_display));
@@ -17,6 +17,7 @@ static const struct device *display_dev;
 
 static lv_obj_t *bg_panel;
 static lv_obj_t *counter_label;
+static lv_obj_t *beat_box;
 static uint32_t frame_count;
 
 static void ui_step(void)
@@ -27,14 +28,22 @@ static void ui_step(void)
 	frame_count++;
 	snprintk(text, sizeof(text), "FRAME %u", frame_count);
 	lv_label_set_text(counter_label, text);
-	lv_obj_center(counter_label);
+	if (odd) {
+		lv_obj_align(counter_label, LV_ALIGN_TOP_LEFT, 8, 8);
+	} else {
+		lv_obj_align(counter_label, LV_ALIGN_TOP_RIGHT, -8, 8);
+	}
 
 	if (odd) {
-		lv_obj_set_style_bg_color(bg_panel, lv_color_hex(0x0A1F44), 0);
-		lv_obj_set_style_text_color(counter_label, lv_color_hex(0xF7F9FF), 0);
+		lv_obj_set_style_bg_color(bg_panel, lv_color_hex(0x000000), 0);
+		lv_obj_set_style_text_color(counter_label, lv_color_hex(0xFFFFFF), 0);
+		lv_obj_set_style_bg_color(beat_box, lv_color_hex(0xFFFFFF), 0);
+		lv_obj_align(beat_box, LV_ALIGN_BOTTOM_LEFT, 8, -8);
 	} else {
-		lv_obj_set_style_bg_color(bg_panel, lv_color_hex(0xFFE066), 0);
-		lv_obj_set_style_text_color(counter_label, lv_color_hex(0x111111), 0);
+		lv_obj_set_style_bg_color(bg_panel, lv_color_hex(0xFFFFFF), 0);
+		lv_obj_set_style_text_color(counter_label, lv_color_hex(0x000000), 0);
+		lv_obj_set_style_bg_color(beat_box, lv_color_hex(0x000000), 0);
+		lv_obj_align(beat_box, LV_ALIGN_BOTTOM_RIGHT, -8, -8);
 	}
 
 	lv_obj_invalidate(lv_screen_active());
@@ -61,7 +70,15 @@ static void create_ui(void)
 	counter_label = lv_label_create(bg_panel);
 	lv_label_set_text(counter_label, "FRAME 0");
 	lv_obj_set_style_text_color(counter_label, lv_color_hex(0xF7F9FF), 0);
-	lv_obj_center(counter_label);
+	lv_obj_align(counter_label, LV_ALIGN_TOP_LEFT, 8, 8);
+
+	beat_box = lv_obj_create(bg_panel);
+	lv_obj_set_size(beat_box, 48, 48);
+	lv_obj_set_style_border_width(beat_box, 0, 0);
+	lv_obj_set_style_radius(beat_box, 0, 0);
+	lv_obj_set_style_bg_opa(beat_box, LV_OPA_COVER, 0);
+	lv_obj_set_style_bg_color(beat_box, lv_color_hex(0xFFFFFF), 0);
+	lv_obj_align(beat_box, LV_ALIGN_BOTTOM_LEFT, 8, -8);
 }
 
 int main(void)
