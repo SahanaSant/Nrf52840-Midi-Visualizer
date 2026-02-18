@@ -50,6 +50,6 @@ cmake:
     zephyr-base: 'C:/Users/sahan/zephyr-projects/zephyr'
 version: '0.1.0'
 west:
-  command: 'C:\Users\sahan\zephyr-projects\.venv\Scripts\west build -p always -b nrf52840dk/nrf52840 c:\Users\sahan\zephyr-projects\Nrf52840-Midi-Visualizer\Nrf52840-Midi-Visualizer -d c:\Users\sahan\zephyr-projects\Nrf52840-Midi-Visualizer\Nrf52840-Midi-Visualizer\build -- -DSHIELD=adafruit_2_8_tft_touch_v2'
-  topdir: 'c:\Users\sahan\zephyr-projects'
+  command: 'C:\Users\sahan\zephyr-projects\.venv\Scripts\west build -p always -b nrf52840dk/nrf52840 . -d build -- -DSHIELD=adafruit_2_8_tft_touch_v2'
+  topdir: 'C:\Users\sahan\zephyr-projects'
   version: '1.4.0'
