@@ -15,8 +15,15 @@
 #define HAVE_BG_IMAGE 0
 #endif
 
-#define APP_TICK_MS 5
-#define EQ_RENDER_MS 10
+#if __has_include("midi_eq_data.h")
+#include "midi_eq_data.h"
+#define HAVE_MIDI_EQ_DATA 1
+#else
+#define HAVE_MIDI_EQ_DATA 0
+#endif
+
+#define APP_TICK_MS 2
+#define EQ_RENDER_MS 5
 #define EQ_BAR_COUNT 12
 #define EQ_MAX_LEVEL 100
 #define EQ_BASE_LEVEL (EQ_MAX_LEVEL / 3)
@@ -26,6 +33,34 @@
 #define BG_IMAGE_OPA 190
 #define BG_VEIL_OPA 90
 #define SCREEN_DIM_OPA LV_OPA_TRANSP
+
+#if HAVE_MIDI_EQ_DATA && (MIDI_EQ_BAR_COUNT != EQ_BAR_COUNT)
+#error "MIDI_EQ_BAR_COUNT must match EQ_BAR_COUNT"
+#endif
+
+#if HAVE_MIDI_EQ_DATA
+#define EQ_ATTACK_GAIN 320
+#define EQ_RELEASE_GAIN 170
+#define EQ_MIN_UP_STEP (FP_ONE / 2)
+#define EQ_MAX_UP_STEP (FP_ONE * 8)
+#define EQ_MIN_DOWN_STEP (FP_ONE / 3)
+#define EQ_MAX_DOWN_STEP (FP_ONE * 3)
+#define EQ_PEAK_BOOST_PCT 125
+#else
+#define EQ_ATTACK_GAIN 212
+#define EQ_RELEASE_GAIN 62
+#define EQ_MIN_UP_STEP (FP_ONE / 3)
+#define EQ_MAX_UP_STEP (FP_ONE * 5)
+#define EQ_MIN_DOWN_STEP (FP_ONE / 8)
+#define EQ_MAX_DOWN_STEP FP_ONE
+#define EQ_PEAK_BOOST_PCT 150
+#endif
+
+#if HAVE_MIDI_EQ_DATA && defined(MIDI_EQ_TITLE)
+#define EQ_UI_TITLE MIDI_EQ_TITLE
+#else
+#define EQ_UI_TITLE TITLE_TEXT
+#endif
 
 #if DT_HAS_CHOSEN(zephyr_display)
 static const struct device *display_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_display));
@@ -49,6 +84,8 @@ static lv_coord_t disp_h = 240;
 static lv_coord_t slot_h_px;
 static bool status_led_ready;
 static uint32_t prng_state = 0xA5A5F00DU;
+static uint32_t midi_frame_cursor;
+static uint32_t midi_frame_elapsed_ms;
 
 static uint32_t blend_hex(uint32_t a, uint32_t b, uint8_t t)
 {
@@ -183,6 +220,30 @@ static uint32_t prng_next(void)
 static void excite_energy(void)
 {
 	int32_t max_fp = EQ_MAX_LEVEL * FP_ONE;
+
+#if HAVE_MIDI_EQ_DATA
+	for (uint8_t i = 0; i < EQ_BAR_COUNT; i++) {
+		int32_t lvl_fp = (int32_t)midi_eq_frames[midi_frame_cursor][i] * FP_ONE;
+		if (lvl_fp > max_fp) {
+			lvl_fp = max_fp;
+		}
+		if (lvl_fp < 0) {
+			lvl_fp = 0;
+		}
+		eq_energy_fp[i] = lvl_fp;
+	}
+
+	midi_frame_elapsed_ms += EQ_RENDER_MS;
+	while (midi_frame_elapsed_ms >= MIDI_EQ_FRAME_MS) {
+		midi_frame_elapsed_ms -= MIDI_EQ_FRAME_MS;
+		midi_frame_cursor++;
+		if (midi_frame_cursor >= MIDI_EQ_FRAME_COUNT) {
+			midi_frame_cursor = 0;
+		}
+	}
+	return;
+#endif
+
 	int32_t base_fp = EQ_BASE_LEVEL * FP_ONE;
 
 	for (uint8_t i = 0; i < EQ_BAR_COUNT; i++) {
@@ -247,8 +308,9 @@ static int create_eq_ui(void)
 		return -1;
 	}
 
-	lv_label_set_text(title_glow, TITLE_TEXT);
+	lv_label_set_text(title_glow, EQ_UI_TITLE);
 	lv_obj_set_width(title_glow, screen_w - 10);
+	lv_label_set_long_mode(title_glow, LV_LABEL_LONG_MODE_SCROLL_CIRCULAR);
 	lv_obj_set_style_text_font(title_glow, &lv_font_unscii_16, 0);
 	lv_obj_set_style_text_letter_space(title_glow, 1, 0);
 	lv_obj_set_style_text_align(title_glow, LV_TEXT_ALIGN_CENTER, 0);
@@ -256,8 +318,9 @@ static int create_eq_ui(void)
 	lv_obj_set_style_text_opa(title_glow, 180, 0);
 	lv_obj_align(title_glow, LV_ALIGN_TOP_MID, 1, 4);
 
-	lv_label_set_text(title, TITLE_TEXT);
+	lv_label_set_text(title, EQ_UI_TITLE);
 	lv_obj_set_width(title, screen_w - 10);
+	lv_label_set_long_mode(title, LV_LABEL_LONG_MODE_SCROLL_CIRCULAR);
 	lv_obj_set_style_text_font(title, &lv_font_unscii_16, 0);
 	lv_obj_set_style_text_letter_space(title, 1, 0);
 	lv_obj_set_style_text_align(title, LV_TEXT_ALIGN_CENTER, 0);
@@ -356,24 +419,24 @@ static void update_eq_frame(void)
 		int32_t step;
 
 		if (delta >= 0) {
-			step = (delta * 212) >> 8;
-			if (step < (FP_ONE / 3)) {
-				step = FP_ONE / 3;
+			step = (delta * EQ_ATTACK_GAIN) >> 8;
+			if (step < EQ_MIN_UP_STEP) {
+				step = EQ_MIN_UP_STEP;
 			}
-			if (step > (FP_ONE * 5)) {
-				step = FP_ONE * 5;
+			if (step > EQ_MAX_UP_STEP) {
+				step = EQ_MAX_UP_STEP;
 			}
 			eq_level_fp[i] += step;
 			if (eq_level_fp[i] > eq_energy_fp[i]) {
 				eq_level_fp[i] = eq_energy_fp[i];
 			}
 		} else {
-			step = ((-delta) * 62) >> 8;
-			if (step < (FP_ONE / 8)) {
-				step = FP_ONE / 8;
+			step = ((-delta) * EQ_RELEASE_GAIN) >> 8;
+			if (step < EQ_MIN_DOWN_STEP) {
+				step = EQ_MIN_DOWN_STEP;
 			}
-			if (step > FP_ONE) {
-				step = FP_ONE;
+			if (step > EQ_MAX_DOWN_STEP) {
+				step = EQ_MAX_DOWN_STEP;
 			}
 			eq_level_fp[i] -= step;
 			if (eq_level_fp[i] < eq_energy_fp[i]) {
@@ -398,7 +461,7 @@ static void update_eq_frame(void)
 			level = EQ_MAX_LEVEL;
 		}
 		if (level > EQ_BASE_LEVEL) {
-			level = EQ_BASE_LEVEL + (((level - EQ_BASE_LEVEL) * 150) / 100);
+			level = EQ_BASE_LEVEL + (((level - EQ_BASE_LEVEL) * EQ_PEAK_BOOST_PCT) / 100);
 			if (level > EQ_MAX_LEVEL) {
 				level = EQ_MAX_LEVEL;
 			}

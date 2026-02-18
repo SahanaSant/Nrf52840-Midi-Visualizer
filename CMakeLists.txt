@@ -16,3 +16,7 @@ target_sources(app PRIVATE src/main.c)
 if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/src/bg_image.c)
 	target_sources(app PRIVATE src/bg_image.c)
 endif()
+
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/src/midi_eq_data.c)
+	target_sources(app PRIVATE src/midi_eq_data.c)
+endif()
