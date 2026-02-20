@@ -32,6 +32,7 @@ This app reads `sw0`..`sw3` aliases (on nRF52840 DK these map to buttons 1..4):
 - Python 3
 - Optional: virtual environment for tooling
 - `Pillow` (only needed for background-image conversion)
+- Any sort of website to get ready to download MIDI files. I reccommend `https://bitmidi.com/`
 
 ## Quick start
 
