@@ -46,6 +46,11 @@
 #define TITLE_SLIDE_RANGE_PX 18
 #define TITLE_SLIDE_TIME_MS 1900
 #define TITLE_MARQUEE_GAP "        "
+#define PIANO_WHITE_KEY_COUNT 14
+#define PIANO_BLACK_KEY_COUNT 10
+#define PIANO_HIT_DECAY_PER_SEC 260U
+#define PIANO_HIT_MIN 130U
+#define PIANO_HIT_MAX 255U
 
 #if HAVE_MIDI_EQ_DATA && (MIDI_EQ_BAR_COUNT != EQ_BAR_COUNT)
 #error "MIDI_EQ_BAR_COUNT must match EQ_BAR_COUNT"
@@ -127,6 +132,8 @@ static lv_obj_t *beat_pulse_layer;
 static lv_obj_t *progress_track_obj;
 static lv_obj_t *progress_fill_obj;
 static lv_obj_t *piano_panel_obj;
+static lv_obj_t *piano_white_keys[PIANO_WHITE_KEY_COUNT];
+static lv_obj_t *piano_black_keys[PIANO_BLACK_KEY_COUNT];
 static int32_t eq_level_fp[EQ_BAR_COUNT];
 static int32_t eq_energy_fp[EQ_BAR_COUNT];
 static int32_t eq_flash_fp[EQ_BAR_COUNT];
@@ -141,6 +148,9 @@ static bool status_led_ready;
 static bool show_elapsed_time;
 static bool piano_visible;
 static bool piano_mode_active;
+static uint8_t piano_white_hit[PIANO_WHITE_KEY_COUNT];
+static uint8_t piano_black_hit[PIANO_BLACK_KEY_COUNT];
+static uint8_t piano_black_used_count;
 static volatile bool mode_toggle_pending;
 static volatile bool scene_cycle_pending;
 static volatile bool pause_toggle_pending;
@@ -184,6 +194,8 @@ static struct gpio_callback piano_button_cb_data;
 
 static uint32_t playback_elapsed_ms(void);
 static void ground_all_bars(void);
+static void piano_reset_state(void);
+static uint32_t prng_next(void);
 
 enum scene_id {
 	SCENE_WHITE = 0,
@@ -615,12 +627,144 @@ static void set_piano_mode(bool enabled)
 	if (enabled) {
 		ground_all_bars();
 	}
+	piano_reset_state();
 	set_piano_visible(enabled);
+}
+
+static void piano_apply_visuals(void)
+{
+	for (uint8_t i = 0; i < PIANO_WHITE_KEY_COUNT; i++) {
+		lv_obj_t *key = piano_white_keys[i];
+		uint8_t hit = piano_white_hit[i];
+		uint8_t t = (uint8_t)((i * 255U) / MAX(1U, (PIANO_WHITE_KEY_COUNT - 1U)));
+		uint8_t mix_t = (uint8_t)((hit * 180U) / 255U);
+		uint8_t edge_t = (uint8_t)((hit * 110U) / 255U);
+		uint8_t shadow_opa = (uint8_t)((hit * 170U) / 255U);
+		lv_coord_t shadow_w = (lv_coord_t)(1 + ((hit * 8U) / 255U));
+		uint32_t accent_hex = palette_hex(active_scene_idx, t);
+		uint32_t hot_hex = blend_hex(accent_hex, 0xFFFFFFU, 48U);
+		uint32_t base_hex = 0xF8FAFFU;
+		uint32_t bg_hex = blend_hex(base_hex, hot_hex, mix_t);
+		uint32_t edge_hex = blend_hex(0xAEB5C7U, accent_hex, edge_t);
+
+		if (key == NULL) {
+			continue;
+		}
+		lv_obj_set_style_bg_color(key, lv_color_hex(bg_hex), 0);
+		lv_obj_set_style_border_color(key, lv_color_hex(edge_hex), 0);
+		lv_obj_set_style_shadow_color(key, lv_color_hex(accent_hex), 0);
+		lv_obj_set_style_shadow_width(key, shadow_w, 0);
+		lv_obj_set_style_shadow_opa(key, shadow_opa, 0);
+	}
+
+	for (uint8_t i = 0; i < piano_black_used_count; i++) {
+		lv_obj_t *key = piano_black_keys[i];
+		uint8_t hit = piano_black_hit[i];
+		uint8_t t = (uint8_t)((i * 255U) / MAX(1U, (piano_black_used_count - 1U)));
+		uint8_t mix_t = (uint8_t)((hit * 210U) / 255U);
+		uint8_t edge_t = (uint8_t)((hit * 160U) / 255U);
+		uint8_t shadow_opa = (uint8_t)(60U + ((hit * 170U) / 255U));
+		lv_coord_t shadow_w = (lv_coord_t)(4 + ((hit * 8U) / 255U));
+		uint32_t accent_hex = palette_hex(active_scene_idx, t);
+		uint32_t hot_hex = blend_hex(accent_hex, 0xFFFFFFU, 24U);
+		uint32_t base_hex = 0x0B1028U;
+		uint32_t bg_hex = blend_hex(base_hex, hot_hex, mix_t);
+		uint32_t edge_hex = blend_hex(0x202746U, accent_hex, edge_t);
+
+		if (key == NULL) {
+			continue;
+		}
+		lv_obj_set_style_bg_color(key, lv_color_hex(bg_hex), 0);
+		lv_obj_set_style_border_color(key, lv_color_hex(edge_hex), 0);
+		lv_obj_set_style_shadow_color(key, lv_color_hex(accent_hex), 0);
+		lv_obj_set_style_shadow_width(key, shadow_w, 0);
+		lv_obj_set_style_shadow_opa(key, shadow_opa, 0);
+	}
+}
+
+static void piano_reset_state(void)
+{
+	for (uint8_t i = 0; i < PIANO_WHITE_KEY_COUNT; i++) {
+		piano_white_hit[i] = 0;
+	}
+	for (uint8_t i = 0; i < PIANO_BLACK_KEY_COUNT; i++) {
+		piano_black_hit[i] = 0;
+	}
+	piano_apply_visuals();
+}
+
+static void update_piano_frame(uint32_t dt_ms)
+{
+	uint32_t decay = (PIANO_HIT_DECAY_PER_SEC * dt_ms) / 1000U;
+
+	if (decay < 1U) {
+		decay = 1U;
+	}
+	if (decay > 255U) {
+		decay = 255U;
+	}
+
+	for (uint8_t i = 0; i < PIANO_WHITE_KEY_COUNT; i++) {
+		if (piano_white_hit[i] <= decay) {
+			piano_white_hit[i] = 0;
+		} else {
+			piano_white_hit[i] = (uint8_t)(piano_white_hit[i] - decay);
+		}
+	}
+	for (uint8_t i = 0; i < piano_black_used_count; i++) {
+		if (piano_black_hit[i] <= decay) {
+			piano_black_hit[i] = 0;
+		} else {
+			piano_black_hit[i] = (uint8_t)(piano_black_hit[i] - decay);
+		}
+	}
+
+	if (!playback_paused) {
+		uint8_t hit_count = (uint8_t)(1U + (prng_next() & 0x01U));
+
+		if ((prng_next() & 0x0FU) == 0U) {
+			hit_count++;
+		}
+
+		for (uint8_t h = 0; h < hit_count; h++) {
+			uint32_t r = prng_next();
+			uint8_t amp = (uint8_t)(PIANO_HIT_MIN + (r % (PIANO_HIT_MAX - PIANO_HIT_MIN + 1U)));
+			bool use_black = ((((r >> 8) & 0x03U) == 0U) && (piano_black_used_count > 0U));
+
+			if (use_black) {
+				uint8_t b = (uint8_t)(prng_next() % piano_black_used_count);
+				uint8_t w = (uint8_t)((b * PIANO_WHITE_KEY_COUNT) / MAX(1U, piano_black_used_count));
+				uint8_t w_amp = (amp > 46U) ? (uint8_t)(amp - 46U) : amp;
+
+				if (amp > piano_black_hit[b]) {
+					piano_black_hit[b] = amp;
+				}
+				if ((w < PIANO_WHITE_KEY_COUNT) && (w_amp > piano_white_hit[w])) {
+					piano_white_hit[w] = w_amp;
+				}
+			} else {
+				uint8_t w = (uint8_t)(prng_next() % PIANO_WHITE_KEY_COUNT);
+
+				if (amp > piano_white_hit[w]) {
+					piano_white_hit[w] = amp;
+				}
+				if ((w + 1U) < PIANO_WHITE_KEY_COUNT && ((r & 0x30U) == 0x30U)) {
+					uint8_t chord_amp = (amp > 34U) ? (uint8_t)(amp - 34U) : amp;
+
+					if (chord_amp > piano_white_hit[w + 1U]) {
+						piano_white_hit[w + 1U] = chord_amp;
+					}
+				}
+			}
+		}
+	}
+
+	piano_apply_visuals();
+	update_progress_line();
 }
 
 static int create_piano_overlay(lv_obj_t *screen, lv_coord_t screen_w, lv_coord_t screen_h)
 {
-	const uint8_t white_key_count = 14U;
 	const uint8_t black_rel_idx[] = { 0U, 1U, 3U, 4U, 5U };
 	const lv_coord_t panel_h = MAX(66, (screen_h * 33) / 100);
 	const lv_coord_t panel_w = screen_w - 12;
@@ -633,6 +777,7 @@ static int create_piano_overlay(lv_obj_t *screen, lv_coord_t screen_w, lv_coord_
 	lv_coord_t black_h;
 	lv_coord_t key_y;
 	lv_coord_t start_x;
+	uint8_t black_idx = 0U;
 
 	piano_panel_obj = lv_obj_create(screen);
 	if (piano_panel_obj == NULL) {
@@ -660,7 +805,7 @@ static int create_piano_overlay(lv_obj_t *screen, lv_coord_t screen_w, lv_coord_
 	lv_obj_clear_flag(piano_panel_obj, LV_OBJ_FLAG_SCROLLABLE);
 	lv_obj_set_scrollbar_mode(piano_panel_obj, LV_SCROLLBAR_MODE_OFF);
 
-	white_w = (panel_w - (2 * inner_pad) - ((white_key_count - 1) * white_gap)) / white_key_count;
+	white_w = (panel_w - (2 * inner_pad) - ((PIANO_WHITE_KEY_COUNT - 1) * white_gap)) / PIANO_WHITE_KEY_COUNT;
 	if (white_w < 6) {
 		white_w = 6;
 	}
@@ -670,12 +815,12 @@ static int create_piano_overlay(lv_obj_t *screen, lv_coord_t screen_w, lv_coord_
 		white_h = 26;
 	}
 	key_y = panel_h - white_h - 5;
-	start_x = (panel_w - ((white_w * white_key_count) + ((white_key_count - 1) * white_gap))) / 2;
+	start_x = (panel_w - ((white_w * PIANO_WHITE_KEY_COUNT) + ((PIANO_WHITE_KEY_COUNT - 1) * white_gap))) / 2;
 	if (start_x < inner_pad) {
 		start_x = inner_pad;
 	}
 
-	for (uint8_t i = 0U; i < white_key_count; i++) {
+	for (uint8_t i = 0U; i < PIANO_WHITE_KEY_COUNT; i++) {
 		lv_obj_t *key = lv_obj_create(piano_panel_obj);
 
 		if (key == NULL) {
@@ -691,6 +836,7 @@ static int create_piano_overlay(lv_obj_t *screen, lv_coord_t screen_w, lv_coord_
 		lv_obj_set_style_bg_opa(key, 230, 0);
 		lv_obj_set_style_shadow_width(key, 0, 0);
 		lv_obj_clear_flag(key, LV_OBJ_FLAG_SCROLLABLE);
+		piano_white_keys[i] = key;
 	}
 
 	black_w = MAX(4, (white_w * 56) / 100);
@@ -707,7 +853,7 @@ static int create_piano_overlay(lv_obj_t *screen, lv_coord_t screen_w, lv_coord_
 			lv_coord_t black_x;
 			lv_obj_t *key;
 
-			if ((left_idx + 1U) >= white_key_count) {
+			if ((left_idx + 1U) >= PIANO_WHITE_KEY_COUNT) {
 				continue;
 			}
 
@@ -731,11 +877,18 @@ static int create_piano_overlay(lv_obj_t *screen, lv_coord_t screen_w, lv_coord_
 			lv_obj_set_style_shadow_width(key, 6, 0);
 			lv_obj_set_style_shadow_opa(key, 80, 0);
 			lv_obj_clear_flag(key, LV_OBJ_FLAG_SCROLLABLE);
+
+			if (black_idx < PIANO_BLACK_KEY_COUNT) {
+				piano_black_keys[black_idx] = key;
+				black_idx++;
+			}
 		}
 	}
 
+	piano_black_used_count = black_idx;
 	piano_visible = false;
 	lv_obj_add_flag(piano_panel_obj, LV_OBJ_FLAG_HIDDEN);
+	piano_reset_state();
 	return 0;
 }
 
@@ -1664,7 +1817,11 @@ int main(void)
 				dt_ms = EQ_RENDER_MS;
 			}
 
-			update_eq_frame(dt_ms);
+			if (piano_mode_active) {
+				update_piano_frame(dt_ms);
+			} else {
+				update_eq_frame(dt_ms);
+			}
 			refresh_header_text(false);
 			last_render = now;
 			next_render = now + EQ_RENDER_MS;
