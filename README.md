@@ -83,15 +83,27 @@ python tools/convert_bg_image.py "C:\path\to\image.jpg" --width 320 --height 240
 
 If `bg_image` files are missing, the app uses a generated gradient/blob background.
 
-## Project structure
+# Project Structure (What Each File Is For)
 
-- `src/main.c`: Visualizer UI, animation engine, button handling
-- `src/midi_eq_data.*`: Generated song frame data
-- `src/bg_image.*`: Optional generated background image asset
-- `boards/nrf52840dk_nrf52840.overlay`: Board/shield/pin configuration
-- `tools/convert_midi_to_eq.py`: MIDI -> EQ frame converter
-- `tools/load_midi.py`: Convert + build + flash helper
-- `tools/convert_bg_image.py`: Image -> LVGL asset converter
+`Nrf52840-Midi-Visualizer/`
+  `boards/`
+    `nrf52840dk_nrf52840.overlay` -> Devicetree overlay for board/shield pin/device config overrides used by this app.
+  `src/`
+    `main.c` -> Main firmware app: LVGL UI creation, button handling, mode switching (EQ/piano), and render/update loops.
+    `midi_eq_data.h` -> Auto-generated constants for MIDI frame playback (MIDI_EQ_BAR_COUNT, MIDI_EQ_FRAME_MS, MIDI_EQ_FRAME_COUNT, title).
+    `midi_eq_data.c` -> Auto-generated per-frame EQ data array used at runtime to drive animation.
+    `bg_image.h` -> Declaration for converted LVGL background image descriptor
+    `bg_image.c` -> Converted LVGL image bytes/descriptor used as background asset.
+  `tools/`
+    `load_midi.py` -> One-command helper to convert MIDI, then build and optionally flash. 
+    `convert_midi_to_eq.py` -> Converts .mid into firmware-friendly frame data (midi_eq_data.h/.c).
+    `convert_bg_image.py` -> Converts regular image files into LVGL ARGB image C source (bg_image.h/.c).
+  prj.conf
+  CMakeLists.txt
+  Kconfig
+  sample.yaml
+  VERSION
+  debug.conf
 
 ## Troubleshooting
 
@@ -102,3 +114,7 @@ If `bg_image` files are missing, the app uses a generated gradient/blob backgrou
 ## Notes
 
 This is a personal project and an active playground for visual tuning, MIDI mapping, and UI effects.
+EQ mode and piano mode are mutually exclusive on screen.
+UI scrolling is disabled for a fixed display.
+Piano mode currently maps from generated 12-band MIDI frame data (not raw per-note event stream yet).
+In white scene, piano keys are classic black/white and hit notes flash yellow.
