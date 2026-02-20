@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 ﻿# nRF52840 MIDI Visualizer
 
 A personal Zephyr project that turns MIDI songs into a live EQ-style visualizer on an nRF52840 DK with an Adafruit 2.8" TFT shield.
