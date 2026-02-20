@@ -530,6 +530,26 @@ static void apply_scene_styles(void)
 			lv_obj_set_style_shadow_width(eq_cap[i], 6, 0);
 			lv_obj_set_style_shadow_opa(eq_cap[i], 170, 0);
 		}
+
+		/* Avoid right-edge bright artifact from the final band. */
+		if (i == (EQ_BAR_COUNT - 1U)) {
+			if (eq_slot[i] != NULL) {
+				lv_obj_set_style_border_width(eq_slot[i], 0, 0);
+				lv_obj_set_style_border_opa(eq_slot[i], 0, 0);
+			}
+			if (eq_fill[i] != NULL) {
+				lv_obj_set_style_shadow_width(eq_fill[i], 0, 0);
+				lv_obj_set_style_shadow_opa(eq_fill[i], 0, 0);
+			}
+			if (eq_flash[i] != NULL) {
+				lv_obj_set_style_shadow_width(eq_flash[i], 0, 0);
+				lv_obj_set_style_shadow_opa(eq_flash[i], 0, 0);
+			}
+			if (eq_cap[i] != NULL) {
+				lv_obj_set_style_shadow_width(eq_cap[i], 0, 0);
+				lv_obj_set_style_shadow_opa(eq_cap[i], 0, 0);
+			}
+		}
 	}
 
 	if (progress_fill_obj != NULL) {
@@ -572,30 +592,18 @@ static void piano_slide_exec_cb(void *obj, int32_t value)
 
 static void set_piano_visible(bool show)
 {
-	lv_anim_t a;
-	int32_t start_y;
-	int32_t end_y;
-
 	if (piano_panel_obj == NULL) {
 		piano_visible = false;
 		return;
 	}
 
-	start_y = lv_obj_get_y(piano_panel_obj);
-	end_y = show ? piano_panel_y_shown : piano_panel_y_hidden;
-	if (start_y == end_y) {
-		piano_visible = show;
-		return;
-	}
-
 	lv_anim_del(piano_panel_obj, piano_slide_exec_cb);
-	lv_anim_init(&a);
-	lv_anim_set_var(&a, piano_panel_obj);
-	lv_anim_set_values(&a, start_y, end_y);
-	lv_anim_set_time(&a, 180);
-	lv_anim_set_path_cb(&a, lv_anim_path_ease_out);
-	lv_anim_set_exec_cb(&a, piano_slide_exec_cb);
-	lv_anim_start(&a);
+	lv_obj_set_y(piano_panel_obj, piano_panel_y_shown);
+	if (show) {
+		lv_obj_clear_flag(piano_panel_obj, LV_OBJ_FLAG_HIDDEN);
+	} else {
+		lv_obj_add_flag(piano_panel_obj, LV_OBJ_FLAG_HIDDEN);
+	}
 
 	piano_visible = show;
 }
@@ -650,6 +658,7 @@ static int create_piano_overlay(lv_obj_t *screen, lv_coord_t screen_w, lv_coord_
 	lv_obj_set_style_shadow_width(piano_panel_obj, 12, 0);
 	lv_obj_set_style_shadow_opa(piano_panel_obj, 180, 0);
 	lv_obj_clear_flag(piano_panel_obj, LV_OBJ_FLAG_SCROLLABLE);
+	lv_obj_set_scrollbar_mode(piano_panel_obj, LV_SCROLLBAR_MODE_OFF);
 
 	white_w = (panel_w - (2 * inner_pad) - ((white_key_count - 1) * white_gap)) / white_key_count;
 	if (white_w < 6) {
@@ -726,6 +735,7 @@ static int create_piano_overlay(lv_obj_t *screen, lv_coord_t screen_w, lv_coord_
 	}
 
 	piano_visible = false;
+	lv_obj_add_flag(piano_panel_obj, LV_OBJ_FLAG_HIDDEN);
 	return 0;
 }
 
@@ -1159,6 +1169,8 @@ static int create_eq_ui(void)
 	lv_coord_t slot_h = screen_h - top_pad - bottom_pad;
 	lv_coord_t usable_w = screen_w - (2 * side_pad);
 	lv_coord_t bar_w = (lv_coord_t)((usable_w - ((EQ_BAR_COUNT - 1) * gap)) / EQ_BAR_COUNT);
+	lv_coord_t bars_total_w;
+	lv_coord_t bars_x;
 
 	if (bar_w < 6) {
 		bar_w = 6;
@@ -1166,10 +1178,18 @@ static int create_eq_ui(void)
 	if (slot_h < 24) {
 		slot_h = 24;
 	}
+	bars_total_w = (bar_w * EQ_BAR_COUNT) + ((EQ_BAR_COUNT - 1) * gap);
+	bars_x = (screen_w - bars_total_w) / 2;
+	if (bars_x < 0) {
+		bars_x = 0;
+	}
 
 	lv_obj_set_style_bg_opa(screen, LV_OPA_COVER, 0);
 	lv_obj_set_style_bg_color(screen, lv_color_hex(0x050312), 0);
 	lv_obj_set_style_pad_all(screen, 0, 0);
+	lv_obj_clear_flag(screen, LV_OBJ_FLAG_SCROLLABLE);
+	lv_obj_set_scrollbar_mode(screen, LV_SCROLLBAR_MODE_OFF);
+	lv_obj_set_scroll_dir(screen, LV_DIR_NONE);
 
 	create_background_layer(screen, screen_w, screen_h);
 	beat_pulse_layer = lv_obj_create(screen);
@@ -1277,7 +1297,7 @@ static int create_eq_ui(void)
 		eq_cap_fp[i] = EQ_BASE_LEVEL * FP_ONE;
 
 		lv_obj_set_size(slot, bar_w, slot_h);
-		lv_obj_set_pos(slot, side_pad + (i * (bar_w + gap)), top_pad);
+		lv_obj_set_pos(slot, bars_x + (i * (bar_w + gap)), top_pad);
 		lv_obj_set_style_border_width(slot, 0, 0);
 		lv_obj_set_style_pad_all(slot, 1, 0);
 		lv_obj_set_style_radius(slot, 3, 0);
@@ -1330,6 +1350,17 @@ static int create_eq_ui(void)
 		lv_obj_set_style_shadow_spread(cap, 1, 0);
 		lv_obj_set_style_shadow_opa(cap, 150, 0);
 		lv_obj_clear_flag(cap, LV_OBJ_FLAG_SCROLLABLE);
+
+		if (i == (EQ_BAR_COUNT - 1U)) {
+			lv_obj_set_style_border_width(slot, 0, 0);
+			lv_obj_set_style_border_opa(slot, 0, 0);
+			lv_obj_set_style_shadow_width(fill, 0, 0);
+			lv_obj_set_style_shadow_opa(fill, 0, 0);
+			lv_obj_set_style_shadow_width(flash, 0, 0);
+			lv_obj_set_style_shadow_opa(flash, 0, 0);
+			lv_obj_set_style_shadow_width(cap, 0, 0);
+			lv_obj_set_style_shadow_opa(cap, 0, 0);
+		}
 	}
 
 	/* Subtle global dim so the screen isn't blinding. */
@@ -1348,6 +1379,19 @@ static int create_eq_ui(void)
 	if (create_piano_overlay(screen, screen_w, screen_h) != 0) {
 		return -1;
 	}
+
+	/* Guard strip to hide occasional right-edge draw artifacts. */
+	lv_obj_t *edge_mask = lv_obj_create(screen);
+	if (edge_mask == NULL) {
+		return -1;
+	}
+	lv_obj_set_size(edge_mask, 2, screen_h);
+	lv_obj_align(edge_mask, LV_ALIGN_RIGHT_MID, 0, 0);
+	lv_obj_set_style_border_width(edge_mask, 0, 0);
+	lv_obj_set_style_radius(edge_mask, 0, 0);
+	lv_obj_set_style_bg_color(edge_mask, lv_color_hex(0x050312), 0);
+	lv_obj_set_style_bg_opa(edge_mask, LV_OPA_COVER, 0);
+	lv_obj_clear_flag(edge_mask, LV_OBJ_FLAG_SCROLLABLE);
 
 	apply_scene_styles();
 	update_progress_line();
