@@ -5,8 +5,8 @@ A personal Zephyr project that turns MIDI songs into a live EQ-style visualizer 
 ## What it does
 
 - Renders a 12-band animated EQ using LVGL.
-- Supports two visualizer modes: vertical bars and circular radial lines.
-- Includes multiple color scenes (`white`, `neon-night`, `botanic-pop`, `sunset-heat`).
+- Supports two visualizer modes: vertical bars and piano mode.
+- Includes multiple color scenes (`white`, `neon-night`, `botanic-pop`, `sunset-heat`, `aqua-crimson`, `rainbow-stripe` ).
 - Shows song progress and a title/elapsed-time header.
 - Uses precomputed MIDI frames generated from `.mid` files.
 - Falls back to synthetic animation if MIDI frame data is not present.
@@ -24,7 +24,7 @@ This app reads `sw0`..`sw3` aliases (on nRF52840 DK these map to buttons 1..4):
 - `sw0`: Toggle header mode (song title <-> elapsed time)
 - `sw1`: Cycle color scene
 - `sw2`: Pause/resume playback
-- `sw3`: Toggle visualizer mode (bars <-> circle)
+- `sw3`: Toggle visualizer mode (bars <-> piano)
 
 ## Software prerequisites
 
