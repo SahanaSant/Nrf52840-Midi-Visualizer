@@ -11634,3 +11634,1011 @@ events:
         - "c:\\Users\\sahan\\.vscode\\extensions\\openai.chatgpt-0.4.74-win32-x64\\bin\\windows-x86_64"
       CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/Zephyr-Kernel"
 ...
+
+---
+events:
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/FindPython/Support.cmake:2430 (find_program)"
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/FindPython3.cmake:656 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/python.cmake:41 (find_package)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/zephyr_default.cmake:131 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/share/zephyr-package/cmake/ZephyrConfig.cmake:66 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/share/zephyr-package/cmake/ZephyrConfig.cmake:97 (include_boilerplate)"
+      - "CMakeLists.txt:8 (find_package)"
+    mode: "program"
+    variable: "_Python3_EXECUTABLE_DEBUG"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "python3.14_d"
+      - "python3.13_d"
+      - "python3.12_d"
+      - "python3.11_d"
+      - "python3.10_d"
+      - "python3_d"
+      - "python_d"
+    candidate_directories:
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/"
+    searched_directories:
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.14_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.14_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.14_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.13_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.13_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.13_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.12_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.12_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.12_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.11_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.11_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.11_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.10_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.10_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.10_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python_d"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "C:\\Users\\sahan\\.codex\\tmp\\arg0\\codex-arg0MkFg7I"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\MATLAB\\R2024b\\bin"
+        - "C:\\Program Files\\Microchip\\xc8\\v3.10\\bin"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\Program Files\\Nordic Semiconductor\\nrf-command-line-tools\\bin\\"
+        - "C:\\Users\\sahan\\AppData\\Local\\Programs\\Python\\Launcher\\"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\sahan\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\intelFPGA_lite\\18.1\\modelsim_ase\\win32aloem"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Ninja-build.Ninja_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oss-winget.gperf_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oss-winget.dtc_Microsoft.Winget.Source_8wekyb3d8bbwe\\usr\\bin"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\JernejSimoncic.Wget_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\NordicSemiconductor.nrfutil_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Program Files\\7-Zip"
+        - "C:\\Users\\sahan\\AppData\\Roaming\\npm"
+        - "C:\\Program Files\\nodejs\\"
+        - "c:\\Users\\sahan\\.vscode\\extensions\\openai.chatgpt-0.4.76-win32-x64\\bin\\windows-x86_64"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/Zephyr-Kernel"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/compiler/gcc/target.cmake:8 (find_program)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/FindTargetTools.cmake:103 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/kernel.cmake:25 (find_package)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/zephyr_default.cmake:140 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/share/zephyr-package/cmake/ZephyrConfig.cmake:66 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/share/zephyr-package/cmake/ZephyrConfig.cmake:97 (include_boilerplate)"
+      - "CMakeLists.txt:8 (find_package)"
+    mode: "program"
+    variable: "CMAKE_C_COMPILER"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "C:/Users/sahan/zephyr-sdk-0.17.2/arm-zephyr-eabi/bin/arm-zephyr-eabi-gcc"
+    candidate_directories:
+      - "C:/Users/sahan/zephyr-sdk-0.17.2/"
+    searched_directories:
+      - "C:/Users/sahan/zephyr-sdk-0.17.2/arm-zephyr-eabi/bin/arm-zephyr-eabi-gcc.com"
+    found: "C:/Users/sahan/zephyr-sdk-0.17.2/arm-zephyr-eabi/bin/arm-zephyr-eabi-gcc.exe"
+    search_context:
+      CMAKE_PREFIX_PATH:
+        - "C:/Users/sahan/zephyr-sdk-0.17.2/sysroots/AMD64-pokysdk-linux/usr"
+      ENV{PATH}:
+        - "C:\\Users\\sahan\\.codex\\tmp\\arg0\\codex-arg0MkFg7I"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\MATLAB\\R2024b\\bin"
+        - "C:\\Program Files\\Microchip\\xc8\\v3.10\\bin"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\Program Files\\Nordic Semiconductor\\nrf-command-line-tools\\bin\\"
+        - "C:\\Users\\sahan\\AppData\\Local\\Programs\\Python\\Launcher\\"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\sahan\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\intelFPGA_lite\\18.1\\modelsim_ase\\win32aloem"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Ninja-build.Ninja_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oss-winget.gperf_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oss-winget.dtc_Microsoft.Winget.Source_8wekyb3d8bbwe\\usr\\bin"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\JernejSimoncic.Wget_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\NordicSemiconductor.nrfutil_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Program Files\\7-Zip"
+        - "C:\\Users\\sahan\\AppData\\Roaming\\npm"
+        - "C:\\Program Files\\nodejs\\"
+        - "c:\\Users\\sahan\\.vscode\\extensions\\openai.chatgpt-0.4.76-win32-x64\\bin\\windows-x86_64"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/Zephyr-Kernel"
+...
+
+---
+events:
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/FindPython/Support.cmake:2430 (find_program)"
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/FindPython3.cmake:656 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/python.cmake:41 (find_package)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/zephyr_default.cmake:131 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/share/zephyr-package/cmake/ZephyrConfig.cmake:66 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/share/zephyr-package/cmake/ZephyrConfig.cmake:97 (include_boilerplate)"
+      - "CMakeLists.txt:8 (find_package)"
+    mode: "program"
+    variable: "_Python3_EXECUTABLE_DEBUG"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "python3.14_d"
+      - "python3.13_d"
+      - "python3.12_d"
+      - "python3.11_d"
+      - "python3.10_d"
+      - "python3_d"
+      - "python_d"
+    candidate_directories:
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/"
+    searched_directories:
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.14_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.14_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.14_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.13_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.13_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.13_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.12_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.12_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.12_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.11_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.11_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.11_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.10_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.10_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.10_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python_d"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "C:\\Users\\sahan\\.codex\\tmp\\arg0\\codex-arg0MkFg7I"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\MATLAB\\R2024b\\bin"
+        - "C:\\Program Files\\Microchip\\xc8\\v3.10\\bin"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\Program Files\\Nordic Semiconductor\\nrf-command-line-tools\\bin\\"
+        - "C:\\Users\\sahan\\AppData\\Local\\Programs\\Python\\Launcher\\"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\sahan\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\intelFPGA_lite\\18.1\\modelsim_ase\\win32aloem"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Ninja-build.Ninja_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oss-winget.gperf_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oss-winget.dtc_Microsoft.Winget.Source_8wekyb3d8bbwe\\usr\\bin"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\JernejSimoncic.Wget_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\NordicSemiconductor.nrfutil_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Program Files\\7-Zip"
+        - "C:\\Users\\sahan\\AppData\\Roaming\\npm"
+        - "C:\\Program Files\\nodejs\\"
+        - "c:\\Users\\sahan\\.vscode\\extensions\\openai.chatgpt-0.4.76-win32-x64\\bin\\windows-x86_64"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/Zephyr-Kernel"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/compiler/gcc/target.cmake:8 (find_program)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/FindTargetTools.cmake:103 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/kernel.cmake:25 (find_package)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/zephyr_default.cmake:140 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/share/zephyr-package/cmake/ZephyrConfig.cmake:66 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/share/zephyr-package/cmake/ZephyrConfig.cmake:97 (include_boilerplate)"
+      - "CMakeLists.txt:8 (find_package)"
+    mode: "program"
+    variable: "CMAKE_C_COMPILER"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "C:/Users/sahan/zephyr-sdk-0.17.2/arm-zephyr-eabi/bin/arm-zephyr-eabi-gcc"
+    candidate_directories:
+      - "C:/Users/sahan/zephyr-sdk-0.17.2/"
+    searched_directories:
+      - "C:/Users/sahan/zephyr-sdk-0.17.2/arm-zephyr-eabi/bin/arm-zephyr-eabi-gcc.com"
+    found: "C:/Users/sahan/zephyr-sdk-0.17.2/arm-zephyr-eabi/bin/arm-zephyr-eabi-gcc.exe"
+    search_context:
+      CMAKE_PREFIX_PATH:
+        - "C:/Users/sahan/zephyr-sdk-0.17.2/sysroots/AMD64-pokysdk-linux/usr"
+      ENV{PATH}:
+        - "C:\\Users\\sahan\\.codex\\tmp\\arg0\\codex-arg0MkFg7I"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\MATLAB\\R2024b\\bin"
+        - "C:\\Program Files\\Microchip\\xc8\\v3.10\\bin"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\Program Files\\Nordic Semiconductor\\nrf-command-line-tools\\bin\\"
+        - "C:\\Users\\sahan\\AppData\\Local\\Programs\\Python\\Launcher\\"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\sahan\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\intelFPGA_lite\\18.1\\modelsim_ase\\win32aloem"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Ninja-build.Ninja_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oss-winget.gperf_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oss-winget.dtc_Microsoft.Winget.Source_8wekyb3d8bbwe\\usr\\bin"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\JernejSimoncic.Wget_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\NordicSemiconductor.nrfutil_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Program Files\\7-Zip"
+        - "C:\\Users\\sahan\\AppData\\Roaming\\npm"
+        - "C:\\Program Files\\nodejs\\"
+        - "c:\\Users\\sahan\\.vscode\\extensions\\openai.chatgpt-0.4.76-win32-x64\\bin\\windows-x86_64"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/Zephyr-Kernel"
+...
+
+---
+events:
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/FindPython/Support.cmake:2430 (find_program)"
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/FindPython3.cmake:656 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/python.cmake:41 (find_package)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/zephyr_default.cmake:131 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/share/zephyr-package/cmake/ZephyrConfig.cmake:66 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/share/zephyr-package/cmake/ZephyrConfig.cmake:97 (include_boilerplate)"
+      - "CMakeLists.txt:8 (find_package)"
+    mode: "program"
+    variable: "_Python3_EXECUTABLE_DEBUG"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "python3.14_d"
+      - "python3.13_d"
+      - "python3.12_d"
+      - "python3.11_d"
+      - "python3.10_d"
+      - "python3_d"
+      - "python_d"
+    candidate_directories:
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/"
+    searched_directories:
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.14_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.14_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.14_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.13_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.13_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.13_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.12_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.12_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.12_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.11_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.11_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.11_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.10_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.10_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.10_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python_d"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "C:\\Users\\sahan\\.codex\\tmp\\arg0\\codex-arg0MkFg7I"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\MATLAB\\R2024b\\bin"
+        - "C:\\Program Files\\Microchip\\xc8\\v3.10\\bin"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\Program Files\\Nordic Semiconductor\\nrf-command-line-tools\\bin\\"
+        - "C:\\Users\\sahan\\AppData\\Local\\Programs\\Python\\Launcher\\"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\sahan\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\intelFPGA_lite\\18.1\\modelsim_ase\\win32aloem"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Ninja-build.Ninja_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oss-winget.gperf_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oss-winget.dtc_Microsoft.Winget.Source_8wekyb3d8bbwe\\usr\\bin"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\JernejSimoncic.Wget_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\NordicSemiconductor.nrfutil_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Program Files\\7-Zip"
+        - "C:\\Users\\sahan\\AppData\\Roaming\\npm"
+        - "C:\\Program Files\\nodejs\\"
+        - "c:\\Users\\sahan\\.vscode\\extensions\\openai.chatgpt-0.4.76-win32-x64\\bin\\windows-x86_64"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/Zephyr-Kernel"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/compiler/gcc/target.cmake:8 (find_program)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/FindTargetTools.cmake:103 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/kernel.cmake:25 (find_package)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/zephyr_default.cmake:140 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/share/zephyr-package/cmake/ZephyrConfig.cmake:66 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/share/zephyr-package/cmake/ZephyrConfig.cmake:97 (include_boilerplate)"
+      - "CMakeLists.txt:8 (find_package)"
+    mode: "program"
+    variable: "CMAKE_C_COMPILER"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "C:/Users/sahan/zephyr-sdk-0.17.2/arm-zephyr-eabi/bin/arm-zephyr-eabi-gcc"
+    candidate_directories:
+      - "C:/Users/sahan/zephyr-sdk-0.17.2/"
+    searched_directories:
+      - "C:/Users/sahan/zephyr-sdk-0.17.2/arm-zephyr-eabi/bin/arm-zephyr-eabi-gcc.com"
+    found: "C:/Users/sahan/zephyr-sdk-0.17.2/arm-zephyr-eabi/bin/arm-zephyr-eabi-gcc.exe"
+    search_context:
+      CMAKE_PREFIX_PATH:
+        - "C:/Users/sahan/zephyr-sdk-0.17.2/sysroots/AMD64-pokysdk-linux/usr"
+      ENV{PATH}:
+        - "C:\\Users\\sahan\\.codex\\tmp\\arg0\\codex-arg0MkFg7I"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\MATLAB\\R2024b\\bin"
+        - "C:\\Program Files\\Microchip\\xc8\\v3.10\\bin"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\Program Files\\Nordic Semiconductor\\nrf-command-line-tools\\bin\\"
+        - "C:\\Users\\sahan\\AppData\\Local\\Programs\\Python\\Launcher\\"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\sahan\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\intelFPGA_lite\\18.1\\modelsim_ase\\win32aloem"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Ninja-build.Ninja_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oss-winget.gperf_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oss-winget.dtc_Microsoft.Winget.Source_8wekyb3d8bbwe\\usr\\bin"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\JernejSimoncic.Wget_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\NordicSemiconductor.nrfutil_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Program Files\\7-Zip"
+        - "C:\\Users\\sahan\\AppData\\Roaming\\npm"
+        - "C:\\Program Files\\nodejs\\"
+        - "c:\\Users\\sahan\\.vscode\\extensions\\openai.chatgpt-0.4.76-win32-x64\\bin\\windows-x86_64"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/Zephyr-Kernel"
+...
+
+---
+events:
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/FindPython/Support.cmake:2430 (find_program)"
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/FindPython3.cmake:656 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/python.cmake:41 (find_package)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/zephyr_default.cmake:131 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/share/zephyr-package/cmake/ZephyrConfig.cmake:66 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/share/zephyr-package/cmake/ZephyrConfig.cmake:97 (include_boilerplate)"
+      - "CMakeLists.txt:8 (find_package)"
+    mode: "program"
+    variable: "_Python3_EXECUTABLE_DEBUG"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "python3.14_d"
+      - "python3.13_d"
+      - "python3.12_d"
+      - "python3.11_d"
+      - "python3.10_d"
+      - "python3_d"
+      - "python_d"
+    candidate_directories:
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/"
+    searched_directories:
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.14_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.14_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.14_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.13_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.13_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.13_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.12_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.12_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.12_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.11_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.11_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.11_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.10_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.10_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.10_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python_d"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "C:\\Users\\sahan\\.codex\\tmp\\arg0\\codex-arg0MkFg7I"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\MATLAB\\R2024b\\bin"
+        - "C:\\Program Files\\Microchip\\xc8\\v3.10\\bin"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\Program Files\\Nordic Semiconductor\\nrf-command-line-tools\\bin\\"
+        - "C:\\Users\\sahan\\AppData\\Local\\Programs\\Python\\Launcher\\"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\sahan\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\intelFPGA_lite\\18.1\\modelsim_ase\\win32aloem"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Ninja-build.Ninja_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oss-winget.gperf_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oss-winget.dtc_Microsoft.Winget.Source_8wekyb3d8bbwe\\usr\\bin"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\JernejSimoncic.Wget_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\NordicSemiconductor.nrfutil_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Program Files\\7-Zip"
+        - "C:\\Users\\sahan\\AppData\\Roaming\\npm"
+        - "C:\\Program Files\\nodejs\\"
+        - "c:\\Users\\sahan\\.vscode\\extensions\\openai.chatgpt-0.4.76-win32-x64\\bin\\windows-x86_64"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/Zephyr-Kernel"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/compiler/gcc/target.cmake:8 (find_program)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/FindTargetTools.cmake:103 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/kernel.cmake:25 (find_package)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/zephyr_default.cmake:140 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/share/zephyr-package/cmake/ZephyrConfig.cmake:66 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/share/zephyr-package/cmake/ZephyrConfig.cmake:97 (include_boilerplate)"
+      - "CMakeLists.txt:8 (find_package)"
+    mode: "program"
+    variable: "CMAKE_C_COMPILER"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "C:/Users/sahan/zephyr-sdk-0.17.2/arm-zephyr-eabi/bin/arm-zephyr-eabi-gcc"
+    candidate_directories:
+      - "C:/Users/sahan/zephyr-sdk-0.17.2/"
+    searched_directories:
+      - "C:/Users/sahan/zephyr-sdk-0.17.2/arm-zephyr-eabi/bin/arm-zephyr-eabi-gcc.com"
+    found: "C:/Users/sahan/zephyr-sdk-0.17.2/arm-zephyr-eabi/bin/arm-zephyr-eabi-gcc.exe"
+    search_context:
+      CMAKE_PREFIX_PATH:
+        - "C:/Users/sahan/zephyr-sdk-0.17.2/sysroots/AMD64-pokysdk-linux/usr"
+      ENV{PATH}:
+        - "C:\\Users\\sahan\\.codex\\tmp\\arg0\\codex-arg0MkFg7I"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\MATLAB\\R2024b\\bin"
+        - "C:\\Program Files\\Microchip\\xc8\\v3.10\\bin"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\Program Files\\Nordic Semiconductor\\nrf-command-line-tools\\bin\\"
+        - "C:\\Users\\sahan\\AppData\\Local\\Programs\\Python\\Launcher\\"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\sahan\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\intelFPGA_lite\\18.1\\modelsim_ase\\win32aloem"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Ninja-build.Ninja_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oss-winget.gperf_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oss-winget.dtc_Microsoft.Winget.Source_8wekyb3d8bbwe\\usr\\bin"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\JernejSimoncic.Wget_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\NordicSemiconductor.nrfutil_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Program Files\\7-Zip"
+        - "C:\\Users\\sahan\\AppData\\Roaming\\npm"
+        - "C:\\Program Files\\nodejs\\"
+        - "c:\\Users\\sahan\\.vscode\\extensions\\openai.chatgpt-0.4.76-win32-x64\\bin\\windows-x86_64"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/Zephyr-Kernel"
+...
+
+---
+events:
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/FindPython/Support.cmake:2430 (find_program)"
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/FindPython3.cmake:656 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/python.cmake:41 (find_package)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/zephyr_default.cmake:131 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/share/zephyr-package/cmake/ZephyrConfig.cmake:66 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/share/zephyr-package/cmake/ZephyrConfig.cmake:97 (include_boilerplate)"
+      - "CMakeLists.txt:8 (find_package)"
+    mode: "program"
+    variable: "_Python3_EXECUTABLE_DEBUG"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "python3.14_d"
+      - "python3.13_d"
+      - "python3.12_d"
+      - "python3.11_d"
+      - "python3.10_d"
+      - "python3_d"
+      - "python_d"
+    candidate_directories:
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/"
+    searched_directories:
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.14_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.14_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.14_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.13_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.13_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.13_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.12_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.12_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.12_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.11_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.11_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.11_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.10_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.10_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.10_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python_d"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "C:\\Users\\sahan\\.codex\\tmp\\arg0\\codex-arg0MkFg7I"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\MATLAB\\R2024b\\bin"
+        - "C:\\Program Files\\Microchip\\xc8\\v3.10\\bin"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\Program Files\\Nordic Semiconductor\\nrf-command-line-tools\\bin\\"
+        - "C:\\Users\\sahan\\AppData\\Local\\Programs\\Python\\Launcher\\"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\sahan\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\intelFPGA_lite\\18.1\\modelsim_ase\\win32aloem"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Ninja-build.Ninja_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oss-winget.gperf_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oss-winget.dtc_Microsoft.Winget.Source_8wekyb3d8bbwe\\usr\\bin"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\JernejSimoncic.Wget_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\NordicSemiconductor.nrfutil_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Program Files\\7-Zip"
+        - "C:\\Users\\sahan\\AppData\\Roaming\\npm"
+        - "C:\\Program Files\\nodejs\\"
+        - "c:\\Users\\sahan\\.vscode\\extensions\\openai.chatgpt-0.4.76-win32-x64\\bin\\windows-x86_64"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/Zephyr-Kernel"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/compiler/gcc/target.cmake:8 (find_program)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/FindTargetTools.cmake:103 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/kernel.cmake:25 (find_package)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/zephyr_default.cmake:140 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/share/zephyr-package/cmake/ZephyrConfig.cmake:66 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/share/zephyr-package/cmake/ZephyrConfig.cmake:97 (include_boilerplate)"
+      - "CMakeLists.txt:8 (find_package)"
+    mode: "program"
+    variable: "CMAKE_C_COMPILER"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "C:/Users/sahan/zephyr-sdk-0.17.2/arm-zephyr-eabi/bin/arm-zephyr-eabi-gcc"
+    candidate_directories:
+      - "C:/Users/sahan/zephyr-sdk-0.17.2/"
+    searched_directories:
+      - "C:/Users/sahan/zephyr-sdk-0.17.2/arm-zephyr-eabi/bin/arm-zephyr-eabi-gcc.com"
+    found: "C:/Users/sahan/zephyr-sdk-0.17.2/arm-zephyr-eabi/bin/arm-zephyr-eabi-gcc.exe"
+    search_context:
+      CMAKE_PREFIX_PATH:
+        - "C:/Users/sahan/zephyr-sdk-0.17.2/sysroots/AMD64-pokysdk-linux/usr"
+      ENV{PATH}:
+        - "C:\\Users\\sahan\\.codex\\tmp\\arg0\\codex-arg0MkFg7I"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\MATLAB\\R2024b\\bin"
+        - "C:\\Program Files\\Microchip\\xc8\\v3.10\\bin"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\Program Files\\Nordic Semiconductor\\nrf-command-line-tools\\bin\\"
+        - "C:\\Users\\sahan\\AppData\\Local\\Programs\\Python\\Launcher\\"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\sahan\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\intelFPGA_lite\\18.1\\modelsim_ase\\win32aloem"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Ninja-build.Ninja_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oss-winget.gperf_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oss-winget.dtc_Microsoft.Winget.Source_8wekyb3d8bbwe\\usr\\bin"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\JernejSimoncic.Wget_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\NordicSemiconductor.nrfutil_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Program Files\\7-Zip"
+        - "C:\\Users\\sahan\\AppData\\Roaming\\npm"
+        - "C:\\Program Files\\nodejs\\"
+        - "c:\\Users\\sahan\\.vscode\\extensions\\openai.chatgpt-0.4.76-win32-x64\\bin\\windows-x86_64"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/Zephyr-Kernel"
+...
+
+---
+events:
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/FindPython/Support.cmake:2430 (find_program)"
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/FindPython3.cmake:656 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/python.cmake:41 (find_package)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/zephyr_default.cmake:131 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/share/zephyr-package/cmake/ZephyrConfig.cmake:66 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/share/zephyr-package/cmake/ZephyrConfig.cmake:97 (include_boilerplate)"
+      - "CMakeLists.txt:8 (find_package)"
+    mode: "program"
+    variable: "_Python3_EXECUTABLE_DEBUG"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "python3.14_d"
+      - "python3.13_d"
+      - "python3.12_d"
+      - "python3.11_d"
+      - "python3.10_d"
+      - "python3_d"
+      - "python_d"
+    candidate_directories:
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/"
+    searched_directories:
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.14_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.14_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.14_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.13_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.13_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.13_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.12_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.12_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.12_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.11_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.11_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.11_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.10_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.10_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.10_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python_d"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "C:\\Users\\sahan\\.codex\\tmp\\arg0\\codex-arg0MkFg7I"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\MATLAB\\R2024b\\bin"
+        - "C:\\Program Files\\Microchip\\xc8\\v3.10\\bin"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\Program Files\\Nordic Semiconductor\\nrf-command-line-tools\\bin\\"
+        - "C:\\Users\\sahan\\AppData\\Local\\Programs\\Python\\Launcher\\"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\sahan\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\intelFPGA_lite\\18.1\\modelsim_ase\\win32aloem"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Ninja-build.Ninja_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oss-winget.gperf_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oss-winget.dtc_Microsoft.Winget.Source_8wekyb3d8bbwe\\usr\\bin"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\JernejSimoncic.Wget_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\NordicSemiconductor.nrfutil_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Program Files\\7-Zip"
+        - "C:\\Users\\sahan\\AppData\\Roaming\\npm"
+        - "C:\\Program Files\\nodejs\\"
+        - "c:\\Users\\sahan\\.vscode\\extensions\\openai.chatgpt-0.4.76-win32-x64\\bin\\windows-x86_64"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/Zephyr-Kernel"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/compiler/gcc/target.cmake:8 (find_program)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/FindTargetTools.cmake:103 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/kernel.cmake:25 (find_package)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/zephyr_default.cmake:140 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/share/zephyr-package/cmake/ZephyrConfig.cmake:66 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/share/zephyr-package/cmake/ZephyrConfig.cmake:97 (include_boilerplate)"
+      - "CMakeLists.txt:8 (find_package)"
+    mode: "program"
+    variable: "CMAKE_C_COMPILER"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "C:/Users/sahan/zephyr-sdk-0.17.2/arm-zephyr-eabi/bin/arm-zephyr-eabi-gcc"
+    candidate_directories:
+      - "C:/Users/sahan/zephyr-sdk-0.17.2/"
+    searched_directories:
+      - "C:/Users/sahan/zephyr-sdk-0.17.2/arm-zephyr-eabi/bin/arm-zephyr-eabi-gcc.com"
+    found: "C:/Users/sahan/zephyr-sdk-0.17.2/arm-zephyr-eabi/bin/arm-zephyr-eabi-gcc.exe"
+    search_context:
+      CMAKE_PREFIX_PATH:
+        - "C:/Users/sahan/zephyr-sdk-0.17.2/sysroots/AMD64-pokysdk-linux/usr"
+      ENV{PATH}:
+        - "C:\\Users\\sahan\\.codex\\tmp\\arg0\\codex-arg0MkFg7I"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\MATLAB\\R2024b\\bin"
+        - "C:\\Program Files\\Microchip\\xc8\\v3.10\\bin"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\Program Files\\Nordic Semiconductor\\nrf-command-line-tools\\bin\\"
+        - "C:\\Users\\sahan\\AppData\\Local\\Programs\\Python\\Launcher\\"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\sahan\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\intelFPGA_lite\\18.1\\modelsim_ase\\win32aloem"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Ninja-build.Ninja_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oss-winget.gperf_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oss-winget.dtc_Microsoft.Winget.Source_8wekyb3d8bbwe\\usr\\bin"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\JernejSimoncic.Wget_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\NordicSemiconductor.nrfutil_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Program Files\\7-Zip"
+        - "C:\\Users\\sahan\\AppData\\Roaming\\npm"
+        - "C:\\Program Files\\nodejs\\"
+        - "c:\\Users\\sahan\\.vscode\\extensions\\openai.chatgpt-0.4.76-win32-x64\\bin\\windows-x86_64"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/Zephyr-Kernel"
+...
+
+---
+events:
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/FindPython/Support.cmake:2430 (find_program)"
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/FindPython3.cmake:656 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/python.cmake:41 (find_package)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/zephyr_default.cmake:131 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/share/zephyr-package/cmake/ZephyrConfig.cmake:66 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/share/zephyr-package/cmake/ZephyrConfig.cmake:97 (include_boilerplate)"
+      - "CMakeLists.txt:8 (find_package)"
+    mode: "program"
+    variable: "_Python3_EXECUTABLE_DEBUG"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "python3.14_d"
+      - "python3.13_d"
+      - "python3.12_d"
+      - "python3.11_d"
+      - "python3.10_d"
+      - "python3_d"
+      - "python_d"
+    candidate_directories:
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/"
+    searched_directories:
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.14_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.14_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.14_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.13_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.13_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.13_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.12_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.12_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.12_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.11_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.11_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.11_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.10_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.10_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3.10_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python3_d"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python_d.com"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python_d.exe"
+      - "C:/Users/sahan/zephyr-projects/.venv/Scripts/python_d"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "C:\\Users\\sahan\\.codex\\tmp\\arg0\\codex-arg0MkFg7I"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\MATLAB\\R2024b\\bin"
+        - "C:\\Program Files\\Microchip\\xc8\\v3.10\\bin"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\Program Files\\Nordic Semiconductor\\nrf-command-line-tools\\bin\\"
+        - "C:\\Users\\sahan\\AppData\\Local\\Programs\\Python\\Launcher\\"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\sahan\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\intelFPGA_lite\\18.1\\modelsim_ase\\win32aloem"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Ninja-build.Ninja_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oss-winget.gperf_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oss-winget.dtc_Microsoft.Winget.Source_8wekyb3d8bbwe\\usr\\bin"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\JernejSimoncic.Wget_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\NordicSemiconductor.nrfutil_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Program Files\\7-Zip"
+        - "C:\\Users\\sahan\\AppData\\Roaming\\npm"
+        - "C:\\Program Files\\nodejs\\"
+        - "c:\\Users\\sahan\\.vscode\\extensions\\openai.chatgpt-0.4.76-win32-x64\\bin\\windows-x86_64"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/Zephyr-Kernel"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/compiler/gcc/target.cmake:8 (find_program)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/FindTargetTools.cmake:103 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/kernel.cmake:25 (find_package)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/cmake/modules/zephyr_default.cmake:140 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/share/zephyr-package/cmake/ZephyrConfig.cmake:66 (include)"
+      - "C:/Users/sahan/zephyr-projects/zephyr/share/zephyr-package/cmake/ZephyrConfig.cmake:97 (include_boilerplate)"
+      - "CMakeLists.txt:8 (find_package)"
+    mode: "program"
+    variable: "CMAKE_C_COMPILER"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "C:/Users/sahan/zephyr-sdk-0.17.2/arm-zephyr-eabi/bin/arm-zephyr-eabi-gcc"
+    candidate_directories:
+      - "C:/Users/sahan/zephyr-sdk-0.17.2/"
+    searched_directories:
+      - "C:/Users/sahan/zephyr-sdk-0.17.2/arm-zephyr-eabi/bin/arm-zephyr-eabi-gcc.com"
+    found: "C:/Users/sahan/zephyr-sdk-0.17.2/arm-zephyr-eabi/bin/arm-zephyr-eabi-gcc.exe"
+    search_context:
+      CMAKE_PREFIX_PATH:
+        - "C:/Users/sahan/zephyr-sdk-0.17.2/sysroots/AMD64-pokysdk-linux/usr"
+      ENV{PATH}:
+        - "C:\\Users\\sahan\\.codex\\tmp\\arg0\\codex-arg0MkFg7I"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\MATLAB\\R2024b\\bin"
+        - "C:\\Program Files\\Microchip\\xc8\\v3.10\\bin"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\Program Files\\Nordic Semiconductor\\nrf-command-line-tools\\bin\\"
+        - "C:\\Users\\sahan\\AppData\\Local\\Programs\\Python\\Launcher\\"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\sahan\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\intelFPGA_lite\\18.1\\modelsim_ase\\win32aloem"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Ninja-build.Ninja_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oss-winget.gperf_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\oss-winget.dtc_Microsoft.Winget.Source_8wekyb3d8bbwe\\usr\\bin"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\JernejSimoncic.Wget_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Users\\sahan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\NordicSemiconductor.nrfutil_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        - "C:\\Program Files\\7-Zip"
+        - "C:\\Users\\sahan\\AppData\\Roaming\\npm"
+        - "C:\\Program Files\\nodejs\\"
+        - "c:\\Users\\sahan\\.vscode\\extensions\\openai.chatgpt-0.4.76-win32-x64\\bin\\windows-x86_64"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/Zephyr-Kernel"
+...

@@ -110,25 +110,23 @@ static const struct gpio_dt_spec pause_button = GPIO_DT_SPEC_GET(DT_ALIAS(sw2), 
 #endif
 
 #if DT_NODE_HAS_STATUS(DT_ALIAS(sw3), okay)
-static const struct gpio_dt_spec viz_button = GPIO_DT_SPEC_GET(DT_ALIAS(sw3), gpios);
-#define HAVE_VIZ_BUTTON 1
+static const struct gpio_dt_spec piano_button = GPIO_DT_SPEC_GET(DT_ALIAS(sw3), gpios);
+#define HAVE_PIANO_BUTTON 1
 #else
-#define HAVE_VIZ_BUTTON 0
+#define HAVE_PIANO_BUTTON 0
 #endif
 
 static lv_obj_t *eq_slot[EQ_BAR_COUNT];
 static lv_obj_t *eq_fill[EQ_BAR_COUNT];
 static lv_obj_t *eq_flash[EQ_BAR_COUNT];
 static lv_obj_t *eq_cap[EQ_BAR_COUNT];
-static lv_obj_t *circle_line[EQ_BAR_COUNT];
-static lv_point_precise_t circle_points[EQ_BAR_COUNT][2];
-static lv_obj_t *circle_ring_obj;
 static lv_obj_t *title_glow_label;
 static lv_obj_t *title_label;
 static lv_obj_t *title_line_obj;
 static lv_obj_t *beat_pulse_layer;
 static lv_obj_t *progress_track_obj;
 static lv_obj_t *progress_fill_obj;
+static lv_obj_t *piano_panel_obj;
 static int32_t eq_level_fp[EQ_BAR_COUNT];
 static int32_t eq_energy_fp[EQ_BAR_COUNT];
 static int32_t eq_flash_fp[EQ_BAR_COUNT];
@@ -137,12 +135,16 @@ static lv_coord_t disp_w = 320;
 static lv_coord_t disp_h = 240;
 static lv_coord_t slot_h_px;
 static lv_coord_t progress_track_w;
+static lv_coord_t piano_panel_y_shown;
+static lv_coord_t piano_panel_y_hidden;
 static bool status_led_ready;
 static bool show_elapsed_time;
+static bool piano_visible;
+static bool piano_mode_active;
 static volatile bool mode_toggle_pending;
 static volatile bool scene_cycle_pending;
 static volatile bool pause_toggle_pending;
-static volatile bool viz_toggle_pending;
+static volatile bool piano_toggle_pending;
 static uint32_t prng_state = 0xA5A5F00DU;
 static uint32_t midi_frame_cursor;
 static uint32_t midi_frame_elapsed_ms;
@@ -152,9 +154,8 @@ static uint32_t playback_start_ms;
 static int64_t mode_button_last_press_ms;
 static int64_t scene_button_last_press_ms;
 static int64_t pause_button_last_press_ms;
-static int64_t viz_button_last_press_ms;
+static int64_t piano_button_last_press_ms;
 static uint8_t active_scene_idx;
-static uint8_t active_visual_mode;
 static bool playback_paused;
 static uint32_t playback_pause_started_ms;
 static uint32_t playback_pause_accum_ms;
@@ -177,34 +178,21 @@ static struct gpio_callback scene_button_cb_data;
 static struct gpio_callback pause_button_cb_data;
 #endif
 
-#if HAVE_VIZ_BUTTON
-static struct gpio_callback viz_button_cb_data;
+#if HAVE_PIANO_BUTTON
+static struct gpio_callback piano_button_cb_data;
 #endif
 
 static uint32_t playback_elapsed_ms(void);
-static void update_circle_visual(void);
-static void set_visual_mode(uint8_t mode);
+static void ground_all_bars(void);
 
 enum scene_id {
 	SCENE_WHITE = 0,
 	SCENE_NEON_NIGHT,
 	SCENE_BOTANIC_POP,
 	SCENE_SUNSET_HEAT,
+	SCENE_AQUA_CRIMSON,
+	SCENE_RAINBOW_STRIPE,
 	SCENE_COUNT
-};
-
-enum visual_mode_id {
-	VIS_MODE_BARS = 0,
-	VIS_MODE_CIRCLE,
-	VIS_MODE_COUNT
-};
-
-static const int16_t circle_dir_x_q10[EQ_BAR_COUNT] = {
-	0, 512, 887, 1024, 887, 512, 0, -512, -887, -1024, -887, -512
-};
-
-static const int16_t circle_dir_y_q10[EQ_BAR_COUNT] = {
-	-1024, -887, -512, 0, 512, 887, 1024, 887, 512, 0, -512, -887
 };
 
 struct scene_cfg {
@@ -288,6 +276,38 @@ static const struct scene_cfg scenes[SCENE_COUNT] = {
 		.pulse_rise_per_ms = 5,
 		.pulse_fall_per_ms = 2,
 		.pulse_color_hex = 0xFF8C00U
+	},
+	[SCENE_AQUA_CRIMSON] = {
+		.name = "aqua-crimson",
+		.attack_gain = 338,
+		.release_gain = 172,
+		.peak_boost_pct = 134,
+		.flash_attack_gain = 382,
+		.flash_release_gain = 244,
+		.flash_boost_pct = 136,
+		.cap_fall_per_sec = 44,
+		.pulse_threshold = 18,
+		.pulse_gain = 4,
+		.pulse_max_opa = 90,
+		.pulse_rise_per_ms = 5,
+		.pulse_fall_per_ms = 2,
+		.pulse_color_hex = 0x00B8C7U
+	},
+	[SCENE_RAINBOW_STRIPE] = {
+		.name = "rainbow-stripe",
+		.attack_gain = 362,
+		.release_gain = 186,
+		.peak_boost_pct = 142,
+		.flash_attack_gain = 410,
+		.flash_release_gain = 258,
+		.flash_boost_pct = 145,
+		.cap_fall_per_sec = 50,
+		.pulse_threshold = 17,
+		.pulse_gain = 4,
+		.pulse_max_opa = 96,
+		.pulse_rise_per_ms = 5,
+		.pulse_fall_per_ms = 2,
+		.pulse_color_hex = 0xFF00B4U
 	}
 };
 
@@ -340,6 +360,12 @@ static uint32_t palette_hex(uint8_t scene_idx, uint8_t t)
 	static const uint32_t sunset_heat[] = {
 		0xFFF100U, 0xFFC000U, 0xFF8500U, 0xFF3A00U, 0xFF0049U, 0xA00056U, 0x5D003DU
 	};
+	static const uint32_t aqua_crimson[] = {
+		0x64D6BCU, 0x00B8C7U, 0x17364FU, 0x0D1A2FU, 0x411E3AU, 0xBD0927U, 0x500A1FU
+	};
+	static const uint32_t rainbow_stripe[] = {
+		0xFF00B4U, 0xFFB000U, 0xC8FF00U, 0x19FF00U, 0x1EE4D8U, 0x1DA4E6U, 0xA300FFU
+	};
 	const uint32_t *stops = white;
 	uint16_t pos = (uint16_t)t * 6U;
 	uint8_t idx = (uint8_t)(pos / 255U);
@@ -354,6 +380,12 @@ static uint32_t palette_hex(uint8_t scene_idx, uint8_t t)
 		break;
 	case SCENE_SUNSET_HEAT:
 		stops = sunset_heat;
+		break;
+	case SCENE_AQUA_CRIMSON:
+		stops = aqua_crimson;
+		break;
+	case SCENE_RAINBOW_STRIPE:
+		stops = rainbow_stripe;
 		break;
 	case SCENE_WHITE:
 	default:
@@ -453,106 +485,6 @@ static void update_progress_line(void)
 #endif
 }
 
-static void update_circle_visual(void)
-{
-	if (active_visual_mode != VIS_MODE_CIRCLE) {
-		return;
-	}
-
-	lv_coord_t top_pad = 36;
-	lv_coord_t bottom_pad = 8;
-	lv_coord_t area_h = disp_h - top_pad - bottom_pad;
-	lv_coord_t center_x = disp_w / 2;
-	lv_coord_t center_y = top_pad + (area_h / 2) + 6;
-	lv_coord_t inner_radius = (lv_coord_t)(MIN(disp_w, area_h) / 4);
-	lv_coord_t min_ext = MAX(6, (lv_coord_t)(inner_radius / 10));
-	lv_coord_t max_ext = MAX(20, (lv_coord_t)((inner_radius * 3) / 4));
-
-	if (inner_radius < 30) {
-		inner_radius = 30;
-	}
-
-	if (circle_ring_obj != NULL) {
-		lv_coord_t d = inner_radius * 2;
-		lv_obj_set_size(circle_ring_obj, d, d);
-		lv_obj_set_pos(circle_ring_obj, center_x - inner_radius, center_y - inner_radius);
-	}
-
-	for (uint8_t i = 0; i < EQ_BAR_COUNT; i++) {
-		int32_t level = (int32_t)(eq_level_fp[i] >> FP_SHIFT);
-		int32_t flash_level = (int32_t)(eq_flash_fp[i] >> FP_SHIFT);
-		int32_t pulse_level;
-		int32_t ext;
-		int32_t sx;
-		int32_t sy;
-		int32_t ex;
-		int32_t ey;
-
-		if (level < 0) {
-			level = 0;
-		}
-		if (level > EQ_MAX_LEVEL) {
-			level = EQ_MAX_LEVEL;
-		}
-		if (flash_level < level) {
-			flash_level = level;
-		}
-		if (flash_level > EQ_MAX_LEVEL) {
-			flash_level = EQ_MAX_LEVEL;
-		}
-
-		pulse_level = level + (((flash_level - level) * 3) / 4);
-		ext = min_ext + ((pulse_level * max_ext) / EQ_MAX_LEVEL);
-
-		sx = center_x + ((circle_dir_x_q10[i] * inner_radius) / 1024);
-		sy = center_y + ((circle_dir_y_q10[i] * inner_radius) / 1024);
-		ex = center_x + ((circle_dir_x_q10[i] * (inner_radius + ext)) / 1024);
-		ey = center_y + ((circle_dir_y_q10[i] * (inner_radius + ext)) / 1024);
-
-		circle_points[i][0].x = sx;
-		circle_points[i][0].y = sy;
-		circle_points[i][1].x = ex;
-		circle_points[i][1].y = ey;
-
-		if (circle_line[i] != NULL) {
-			lv_line_set_points(circle_line[i], circle_points[i], 2);
-		}
-	}
-}
-
-static void set_visual_mode(uint8_t mode)
-{
-	bool circle_mode = ((mode % VIS_MODE_COUNT) == VIS_MODE_CIRCLE);
-	active_visual_mode = circle_mode ? VIS_MODE_CIRCLE : VIS_MODE_BARS;
-
-	for (uint8_t i = 0; i < EQ_BAR_COUNT; i++) {
-		if (eq_slot[i] != NULL) {
-			if (circle_mode) {
-				lv_obj_add_flag(eq_slot[i], LV_OBJ_FLAG_HIDDEN);
-			} else {
-				lv_obj_clear_flag(eq_slot[i], LV_OBJ_FLAG_HIDDEN);
-			}
-		}
-		if (circle_line[i] != NULL) {
-			if (circle_mode) {
-				lv_obj_clear_flag(circle_line[i], LV_OBJ_FLAG_HIDDEN);
-			} else {
-				lv_obj_add_flag(circle_line[i], LV_OBJ_FLAG_HIDDEN);
-			}
-		}
-	}
-
-	if (circle_ring_obj != NULL) {
-		if (circle_mode) {
-			lv_obj_clear_flag(circle_ring_obj, LV_OBJ_FLAG_HIDDEN);
-		} else {
-			lv_obj_add_flag(circle_ring_obj, LV_OBJ_FLAG_HIDDEN);
-		}
-	}
-
-	update_circle_visual();
-}
-
 static void apply_scene_styles(void)
 {
 	for (uint8_t i = 0; i < EQ_BAR_COUNT; i++) {
@@ -575,9 +507,9 @@ static void apply_scene_styles(void)
 			lv_obj_set_style_bg_color(eq_fill[i], lv_color_hex(top_hex), 0);
 			lv_obj_set_style_bg_grad_color(eq_fill[i], lv_color_hex(bot_hex), 0);
 			lv_obj_set_style_shadow_color(eq_fill[i], lv_color_hex(base_hex), 0);
-			lv_obj_set_style_shadow_width(eq_fill[i], 18, 0);
-			lv_obj_set_style_shadow_spread(eq_fill[i], 3, 0);
-			lv_obj_set_style_shadow_opa(eq_fill[i], 255, 0);
+			lv_obj_set_style_shadow_width(eq_fill[i], 10, 0);
+			lv_obj_set_style_shadow_spread(eq_fill[i], 1, 0);
+			lv_obj_set_style_shadow_opa(eq_fill[i], 210, 0);
 		}
 		if (eq_flash[i] != NULL) {
 			lv_obj_set_style_bg_color(eq_flash[i], lv_color_hex(flash_hex), 0);
@@ -588,21 +520,15 @@ static void apply_scene_styles(void)
 			);
 			lv_obj_set_style_shadow_color(eq_flash[i], lv_color_hex(flash_hex), 0);
 			lv_obj_set_style_bg_opa(eq_flash[i], 220, 0);
-			lv_obj_set_style_shadow_width(eq_flash[i], 16, 0);
-			lv_obj_set_style_shadow_spread(eq_flash[i], 2, 0);
-			lv_obj_set_style_shadow_opa(eq_flash[i], 240, 0);
+			lv_obj_set_style_shadow_width(eq_flash[i], 8, 0);
+			lv_obj_set_style_shadow_spread(eq_flash[i], 1, 0);
+			lv_obj_set_style_shadow_opa(eq_flash[i], 170, 0);
 		}
 		if (eq_cap[i] != NULL) {
 			lv_obj_set_style_bg_color(eq_cap[i], lv_color_hex(cap_hex), 0);
 			lv_obj_set_style_shadow_color(eq_cap[i], lv_color_hex(flash_hex), 0);
-			lv_obj_set_style_shadow_width(eq_cap[i], 10, 0);
-			lv_obj_set_style_shadow_opa(eq_cap[i], 230, 0);
-		}
-		if (circle_line[i] != NULL) {
-			lv_obj_set_style_line_color(circle_line[i], lv_color_hex(base_hex), 0);
-			lv_obj_set_style_line_width(circle_line[i], 3, 0);
-			lv_obj_set_style_line_rounded(circle_line[i], true, 0);
-			lv_obj_set_style_line_opa(circle_line[i], LV_OPA_COVER, 0);
+			lv_obj_set_style_shadow_width(eq_cap[i], 6, 0);
+			lv_obj_set_style_shadow_opa(eq_cap[i], 170, 0);
 		}
 	}
 
@@ -615,15 +541,192 @@ static void apply_scene_styles(void)
 		);
 	}
 
-	if (circle_ring_obj != NULL) {
-		uint32_t ring_hex = palette_hex(active_scene_idx, 128U);
-		uint32_t glow_hex = blend_hex(ring_hex, 0xFFFFFFU, 60U);
+}
 
-		lv_obj_set_style_border_color(circle_ring_obj, lv_color_hex(ring_hex), 0);
-		lv_obj_set_style_shadow_color(circle_ring_obj, lv_color_hex(glow_hex), 0);
-		lv_obj_set_style_shadow_width(circle_ring_obj, 8, 0);
-		lv_obj_set_style_shadow_opa(circle_ring_obj, 130, 0);
+static void set_eq_visible(bool show)
+{
+	for (uint8_t i = 0; i < EQ_BAR_COUNT; i++) {
+		if (eq_slot[i] == NULL) {
+			continue;
+		}
+		if (show) {
+			lv_obj_clear_flag(eq_slot[i], LV_OBJ_FLAG_HIDDEN);
+		} else {
+			lv_obj_add_flag(eq_slot[i], LV_OBJ_FLAG_HIDDEN);
+		}
 	}
+
+	if (beat_pulse_layer != NULL) {
+		if (show) {
+			lv_obj_clear_flag(beat_pulse_layer, LV_OBJ_FLAG_HIDDEN);
+		} else {
+			lv_obj_add_flag(beat_pulse_layer, LV_OBJ_FLAG_HIDDEN);
+		}
+	}
+}
+
+static void piano_slide_exec_cb(void *obj, int32_t value)
+{
+	lv_obj_set_y((lv_obj_t *)obj, (lv_coord_t)value);
+}
+
+static void set_piano_visible(bool show)
+{
+	lv_anim_t a;
+	int32_t start_y;
+	int32_t end_y;
+
+	if (piano_panel_obj == NULL) {
+		piano_visible = false;
+		return;
+	}
+
+	start_y = lv_obj_get_y(piano_panel_obj);
+	end_y = show ? piano_panel_y_shown : piano_panel_y_hidden;
+	if (start_y == end_y) {
+		piano_visible = show;
+		return;
+	}
+
+	lv_anim_del(piano_panel_obj, piano_slide_exec_cb);
+	lv_anim_init(&a);
+	lv_anim_set_var(&a, piano_panel_obj);
+	lv_anim_set_values(&a, start_y, end_y);
+	lv_anim_set_time(&a, 180);
+	lv_anim_set_path_cb(&a, lv_anim_path_ease_out);
+	lv_anim_set_exec_cb(&a, piano_slide_exec_cb);
+	lv_anim_start(&a);
+
+	piano_visible = show;
+}
+
+static void set_piano_mode(bool enabled)
+{
+	piano_mode_active = enabled;
+	set_eq_visible(!enabled);
+	if (enabled) {
+		ground_all_bars();
+	}
+	set_piano_visible(enabled);
+}
+
+static int create_piano_overlay(lv_obj_t *screen, lv_coord_t screen_w, lv_coord_t screen_h)
+{
+	const uint8_t white_key_count = 14U;
+	const uint8_t black_rel_idx[] = { 0U, 1U, 3U, 4U, 5U };
+	const lv_coord_t panel_h = MAX(66, (screen_h * 33) / 100);
+	const lv_coord_t panel_w = screen_w - 12;
+	const lv_coord_t panel_x = 6;
+	const lv_coord_t white_gap = 2;
+	const lv_coord_t inner_pad = 6;
+	lv_coord_t white_w;
+	lv_coord_t white_h;
+	lv_coord_t black_w;
+	lv_coord_t black_h;
+	lv_coord_t key_y;
+	lv_coord_t start_x;
+
+	piano_panel_obj = lv_obj_create(screen);
+	if (piano_panel_obj == NULL) {
+		return -1;
+	}
+
+	piano_panel_y_shown = screen_h - panel_h - 2;
+	piano_panel_y_hidden = screen_h + 2;
+	if (piano_panel_y_shown < 0) {
+		piano_panel_y_shown = 0;
+	}
+
+	lv_obj_set_size(piano_panel_obj, panel_w, panel_h);
+	lv_obj_set_pos(piano_panel_obj, panel_x, piano_panel_y_hidden);
+	lv_obj_set_style_border_width(piano_panel_obj, 1, 0);
+	lv_obj_set_style_border_color(piano_panel_obj, lv_color_hex(0x2A2E4AU), 0);
+	lv_obj_set_style_border_opa(piano_panel_obj, 180, 0);
+	lv_obj_set_style_radius(piano_panel_obj, 10, 0);
+	lv_obj_set_style_pad_all(piano_panel_obj, 0, 0);
+	lv_obj_set_style_bg_color(piano_panel_obj, lv_color_hex(0x070A14U), 0);
+	lv_obj_set_style_bg_opa(piano_panel_obj, 220, 0);
+	lv_obj_set_style_shadow_color(piano_panel_obj, lv_color_hex(0x000000U), 0);
+	lv_obj_set_style_shadow_width(piano_panel_obj, 12, 0);
+	lv_obj_set_style_shadow_opa(piano_panel_obj, 180, 0);
+	lv_obj_clear_flag(piano_panel_obj, LV_OBJ_FLAG_SCROLLABLE);
+
+	white_w = (panel_w - (2 * inner_pad) - ((white_key_count - 1) * white_gap)) / white_key_count;
+	if (white_w < 6) {
+		white_w = 6;
+	}
+
+	white_h = panel_h - 14;
+	if (white_h < 26) {
+		white_h = 26;
+	}
+	key_y = panel_h - white_h - 5;
+	start_x = (panel_w - ((white_w * white_key_count) + ((white_key_count - 1) * white_gap))) / 2;
+	if (start_x < inner_pad) {
+		start_x = inner_pad;
+	}
+
+	for (uint8_t i = 0U; i < white_key_count; i++) {
+		lv_obj_t *key = lv_obj_create(piano_panel_obj);
+
+		if (key == NULL) {
+			return -1;
+		}
+		lv_obj_set_size(key, white_w, white_h);
+		lv_obj_set_pos(key, start_x + (i * (white_w + white_gap)), key_y);
+		lv_obj_set_style_radius(key, 2, 0);
+		lv_obj_set_style_border_width(key, 1, 0);
+		lv_obj_set_style_border_color(key, lv_color_hex(0xB4B9C6U), 0);
+		lv_obj_set_style_border_opa(key, 175, 0);
+		lv_obj_set_style_bg_color(key, lv_color_hex(0xFFFFFFU), 0);
+		lv_obj_set_style_bg_opa(key, 230, 0);
+		lv_obj_set_style_shadow_width(key, 0, 0);
+		lv_obj_clear_flag(key, LV_OBJ_FLAG_SCROLLABLE);
+	}
+
+	black_w = MAX(4, (white_w * 56) / 100);
+	black_h = (white_h * 58) / 100;
+	if (black_h < 14) {
+		black_h = 14;
+	}
+
+	for (uint8_t oct = 0U; oct < 2U; oct++) {
+		for (uint8_t j = 0U; j < ARRAY_SIZE(black_rel_idx); j++) {
+			uint8_t left_idx = (oct * 7U) + black_rel_idx[j];
+			lv_coord_t left_x;
+			lv_coord_t right_x;
+			lv_coord_t black_x;
+			lv_obj_t *key;
+
+			if ((left_idx + 1U) >= white_key_count) {
+				continue;
+			}
+
+			left_x = start_x + (left_idx * (white_w + white_gap));
+			right_x = start_x + ((left_idx + 1U) * (white_w + white_gap));
+			black_x = right_x - (black_w / 2);
+
+			key = lv_obj_create(piano_panel_obj);
+			if (key == NULL) {
+				return -1;
+			}
+			lv_obj_set_size(key, black_w, black_h);
+			lv_obj_set_pos(key, black_x, key_y);
+			lv_obj_set_style_radius(key, 2, 0);
+			lv_obj_set_style_border_width(key, 1, 0);
+			lv_obj_set_style_border_color(key, lv_color_hex(0x1F2242U), 0);
+			lv_obj_set_style_border_opa(key, 220, 0);
+			lv_obj_set_style_bg_color(key, lv_color_hex(0x0B1028U), 0);
+			lv_obj_set_style_bg_opa(key, 250, 0);
+			lv_obj_set_style_shadow_color(key, lv_color_hex(0x5A6CFFU), 0);
+			lv_obj_set_style_shadow_width(key, 6, 0);
+			lv_obj_set_style_shadow_opa(key, 80, 0);
+			lv_obj_clear_flag(key, LV_OBJ_FLAG_SCROLLABLE);
+		}
+	}
+
+	piano_visible = false;
+	return 0;
 }
 
 static void status_led_toggle_safe(void)
@@ -829,8 +932,8 @@ static void pause_button_isr(
 }
 #endif
 
-#if HAVE_VIZ_BUTTON
-static void viz_button_isr(
+#if HAVE_PIANO_BUTTON
+static void piano_button_isr(
 	const struct device *port,
 	struct gpio_callback *cb,
 	uint32_t pins
@@ -841,11 +944,11 @@ static void viz_button_isr(
 	ARG_UNUSED(pins);
 
 	int64_t now = k_uptime_get();
-	if ((now - viz_button_last_press_ms) < MODE_BUTTON_DEBOUNCE_MS) {
+	if ((now - piano_button_last_press_ms) < MODE_BUTTON_DEBOUNCE_MS) {
 		return;
 	}
-	viz_button_last_press_ms = now;
-	viz_toggle_pending = true;
+	piano_button_last_press_ms = now;
+	piano_toggle_pending = true;
 }
 #endif
 
@@ -915,24 +1018,24 @@ static void setup_pause_button(void)
 #endif
 }
 
-static void setup_viz_button(void)
+static void setup_piano_button(void)
 {
-#if HAVE_VIZ_BUTTON
-	if (!gpio_is_ready_dt(&viz_button)) {
-		printk("Visualizer button not ready\\n");
+#if HAVE_PIANO_BUTTON
+	if (!gpio_is_ready_dt(&piano_button)) {
+		printk("Piano button not ready\\n");
 		return;
 	}
-	if (gpio_pin_configure_dt(&viz_button, GPIO_INPUT) != 0) {
-		printk("Visualizer button config failed\\n");
+	if (gpio_pin_configure_dt(&piano_button, GPIO_INPUT) != 0) {
+		printk("Piano button config failed\\n");
 		return;
 	}
-	if (gpio_pin_interrupt_configure_dt(&viz_button, GPIO_INT_EDGE_TO_ACTIVE) != 0) {
-		printk("Visualizer button interrupt setup failed\\n");
+	if (gpio_pin_interrupt_configure_dt(&piano_button, GPIO_INT_EDGE_TO_ACTIVE) != 0) {
+		printk("Piano button interrupt setup failed\\n");
 		return;
 	}
-	gpio_init_callback(&viz_button_cb_data, viz_button_isr, BIT(viz_button.pin));
-	if (gpio_add_callback(viz_button.port, &viz_button_cb_data) != 0) {
-		printk("Visualizer button callback add failed\\n");
+	gpio_init_callback(&piano_button_cb_data, piano_button_isr, BIT(piano_button.pin));
+	if (gpio_add_callback(piano_button.port, &piano_button_cb_data) != 0) {
+		printk("Piano button callback add failed\\n");
 	}
 #endif
 }
@@ -957,7 +1060,6 @@ static void ground_all_bars(void)
 		}
 	}
 
-	update_circle_visual();
 }
 
 static void excite_energy(uint32_t dt_ms)
@@ -1196,9 +1298,9 @@ static int create_eq_ui(void)
 		lv_obj_set_style_bg_grad_color(fill, lv_color_hex(bot_hex), 0);
 		lv_obj_set_style_bg_grad_dir(fill, LV_GRAD_DIR_VER, 0);
 		lv_obj_set_style_shadow_color(fill, lv_color_hex(base_hex), 0);
-		lv_obj_set_style_shadow_width(fill, 14, 0);
-		lv_obj_set_style_shadow_spread(fill, 2, 0);
-		lv_obj_set_style_shadow_opa(fill, 230, 0);
+		lv_obj_set_style_shadow_width(fill, 10, 0);
+		lv_obj_set_style_shadow_spread(fill, 1, 0);
+		lv_obj_set_style_shadow_opa(fill, 210, 0);
 		lv_obj_clear_flag(fill, LV_OBJ_FLAG_SCROLLABLE);
 
 		lv_obj_set_width(flash, MAX(1, bar_w - 4));
@@ -1211,9 +1313,9 @@ static int create_eq_ui(void)
 		lv_obj_set_style_bg_grad_color(flash, lv_color_hex(base_hex), 0);
 		lv_obj_set_style_bg_grad_dir(flash, LV_GRAD_DIR_VER, 0);
 		lv_obj_set_style_shadow_color(flash, lv_color_hex(blend_hex(top_hex, 0xFFFFFFU, 120U)), 0);
-		lv_obj_set_style_shadow_width(flash, 12, 0);
+		lv_obj_set_style_shadow_width(flash, 8, 0);
 		lv_obj_set_style_shadow_spread(flash, 1, 0);
-		lv_obj_set_style_shadow_opa(flash, 160, 0);
+		lv_obj_set_style_shadow_opa(flash, 150, 0);
 		lv_obj_clear_flag(flash, LV_OBJ_FLAG_SCROLLABLE);
 
 		lv_obj_set_width(cap, MAX(2, bar_w - 2));
@@ -1224,45 +1326,10 @@ static int create_eq_ui(void)
 		lv_obj_set_style_bg_opa(cap, LV_OPA_COVER, 0);
 		lv_obj_set_style_bg_color(cap, lv_color_hex(blend_hex(top_hex, 0xFFFFFFU, 150U)), 0);
 		lv_obj_set_style_shadow_color(cap, lv_color_hex(top_hex), 0);
-		lv_obj_set_style_shadow_width(cap, 8, 0);
+		lv_obj_set_style_shadow_width(cap, 6, 0);
 		lv_obj_set_style_shadow_spread(cap, 1, 0);
-		lv_obj_set_style_shadow_opa(cap, 170, 0);
+		lv_obj_set_style_shadow_opa(cap, 150, 0);
 		lv_obj_clear_flag(cap, LV_OBJ_FLAG_SCROLLABLE);
-	}
-
-	circle_ring_obj = lv_obj_create(screen);
-	if (circle_ring_obj == NULL) {
-		return -1;
-	}
-	lv_obj_set_style_bg_opa(circle_ring_obj, LV_OPA_TRANSP, 0);
-	lv_obj_set_style_border_width(circle_ring_obj, 2, 0);
-	lv_obj_set_style_border_opa(circle_ring_obj, 220, 0);
-	lv_obj_set_style_radius(circle_ring_obj, LV_RADIUS_CIRCLE, 0);
-	lv_obj_set_style_shadow_width(circle_ring_obj, 8, 0);
-	lv_obj_set_style_shadow_spread(circle_ring_obj, 1, 0);
-	lv_obj_set_style_shadow_opa(circle_ring_obj, 130, 0);
-	lv_obj_clear_flag(circle_ring_obj, LV_OBJ_FLAG_SCROLLABLE);
-
-	for (uint8_t i = 0; i < EQ_BAR_COUNT; i++) {
-		circle_line[i] = lv_line_create(screen);
-		if (circle_line[i] == NULL) {
-			return -1;
-		}
-
-		lv_obj_set_size(circle_line[i], screen_w, screen_h);
-		lv_obj_set_pos(circle_line[i], 0, 0);
-		lv_obj_set_style_bg_opa(circle_line[i], LV_OPA_TRANSP, 0);
-		lv_obj_set_style_border_width(circle_line[i], 0, 0);
-		lv_obj_set_style_line_width(circle_line[i], 3, 0);
-		lv_obj_set_style_line_rounded(circle_line[i], true, 0);
-		lv_obj_set_style_line_opa(circle_line[i], LV_OPA_COVER, 0);
-		lv_obj_clear_flag(circle_line[i], LV_OBJ_FLAG_SCROLLABLE);
-
-		circle_points[i][0].x = screen_w / 2;
-		circle_points[i][0].y = screen_h / 2;
-		circle_points[i][1].x = screen_w / 2;
-		circle_points[i][1].y = screen_h / 2;
-		lv_line_set_points(circle_line[i], circle_points[i], 2);
 	}
 
 	/* Subtle global dim so the screen isn't blinding. */
@@ -1278,11 +1345,14 @@ static int create_eq_ui(void)
 	lv_obj_set_style_bg_opa(dim, SCREEN_DIM_OPA, 0);
 	lv_obj_clear_flag(dim, LV_OBJ_FLAG_SCROLLABLE);
 
+	if (create_piano_overlay(screen, screen_w, screen_h) != 0) {
+		return -1;
+	}
+
 	apply_scene_styles();
 	update_progress_line();
 	set_header_long_mode(false);
 	refresh_header_text(true);
-	set_visual_mode(VIS_MODE_BARS);
 
 	return 0;
 }
@@ -1438,31 +1508,28 @@ static void update_eq_frame(uint32_t dt_ms)
 			flash_h = slot_h_px;
 		}
 
-		if (active_visual_mode == VIS_MODE_BARS) {
-			lv_obj_set_height(eq_fill[i], fill_h);
-			lv_obj_align(eq_fill[i], LV_ALIGN_BOTTOM_MID, 0, 0);
-			if (eq_flash[i] != NULL) {
-				lv_obj_set_height(eq_flash[i], flash_h);
-				lv_obj_align(eq_flash[i], LV_ALIGN_BOTTOM_MID, 0, 0);
+		lv_obj_set_height(eq_fill[i], fill_h);
+		lv_obj_align(eq_fill[i], LV_ALIGN_BOTTOM_MID, 0, 0);
+		if (eq_flash[i] != NULL) {
+			lv_obj_set_height(eq_flash[i], flash_h);
+			lv_obj_align(eq_flash[i], LV_ALIGN_BOTTOM_MID, 0, 0);
+		}
+		if (eq_cap[i] != NULL) {
+			cap_y = (lv_coord_t)(
+				slot_h_px -
+				(lv_coord_t)(((cap_level_fp >> FP_SHIFT) * slot_h_px * EQ_VISUAL_HEIGHT_PCT) / (EQ_MAX_LEVEL * 100)) -
+				PEAK_CAP_H
+			);
+			if (cap_y < 0) {
+				cap_y = 0;
 			}
-			if (eq_cap[i] != NULL) {
-				cap_y = (lv_coord_t)(
-					slot_h_px -
-					(lv_coord_t)(((cap_level_fp >> FP_SHIFT) * slot_h_px * EQ_VISUAL_HEIGHT_PCT) / (EQ_MAX_LEVEL * 100)) -
-					PEAK_CAP_H
-				);
-				if (cap_y < 0) {
-					cap_y = 0;
-				}
-				if (cap_y > (slot_h_px - PEAK_CAP_H)) {
-					cap_y = slot_h_px - PEAK_CAP_H;
-				}
-				lv_obj_set_y(eq_cap[i], cap_y);
+			if (cap_y > (slot_h_px - PEAK_CAP_H)) {
+				cap_y = slot_h_px - PEAK_CAP_H;
 			}
+			lv_obj_set_y(eq_cap[i], cap_y);
 		}
 	}
 
-	update_circle_visual();
 	update_progress_line();
 }
 
@@ -1487,7 +1554,7 @@ int main(void)
 	setup_mode_button();
 	setup_scene_button();
 	setup_pause_button();
-	setup_viz_button();
+	setup_piano_button();
 
 	struct display_capabilities caps;
 	display_get_capabilities(display_dev, &caps);
@@ -1533,16 +1600,11 @@ int main(void)
 			}
 			refresh_header_text(true);
 		}
-		if (viz_toggle_pending) {
-			viz_toggle_pending = false;
-			active_visual_mode = (active_visual_mode + 1U) % VIS_MODE_COUNT;
-			set_visual_mode(active_visual_mode);
-			printk(
-				"Visualizer: %s\\n",
-				(active_visual_mode == VIS_MODE_CIRCLE) ? "circle" : "bars"
-			);
+		if (piano_toggle_pending) {
+			piano_toggle_pending = false;
+			set_piano_mode(!piano_mode_active);
+			printk("Piano mode: %s\\n", piano_mode_active ? "on" : "off");
 		}
-
 		int64_t now = k_uptime_get();
 		if (now >= next_render) {
 			uint32_t dt_ms;
@@ -1561,7 +1623,7 @@ int main(void)
 			update_eq_frame(dt_ms);
 			refresh_header_text(false);
 			last_render = now;
-			next_render = now + ((active_visual_mode == VIS_MODE_CIRCLE) ? 12 : EQ_RENDER_MS);
+			next_render = now + EQ_RENDER_MS;
 		}
 
 		lv_timer_handler();
