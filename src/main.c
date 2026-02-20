@@ -165,6 +165,7 @@ static uint32_t midi_frame_elapsed_ms;
 static uint32_t midi_song_elapsed_ms;
 static uint32_t last_displayed_second = UINT32_MAX;
 static uint32_t piano_hit_elapsed_ms;
+static uint32_t piano_last_midi_frame = UINT32_MAX;
 static uint32_t playback_start_ms;
 static int64_t mode_button_last_press_ms;
 static int64_t scene_button_last_press_ms;
@@ -714,7 +715,92 @@ static void piano_reset_state(void)
 		piano_black_hit[i] = 0;
 	}
 	piano_hit_elapsed_ms = 0U;
+	piano_last_midi_frame = UINT32_MAX;
 	piano_apply_visuals();
+}
+
+static uint8_t piano_map_bar_to_white(uint8_t bar_idx)
+{
+	return (uint8_t)(
+		((uint16_t)bar_idx * (PIANO_WHITE_KEY_COUNT - 1U) + ((EQ_BAR_COUNT - 1U) / 2U)) /
+		(EQ_BAR_COUNT - 1U)
+	);
+}
+
+static uint8_t piano_map_bar_to_black(uint8_t bar_idx)
+{
+	if (piano_black_used_count == 0U) {
+		return 0U;
+	}
+	return (uint8_t)(
+		((uint16_t)bar_idx * (piano_black_used_count - 1U) + ((EQ_BAR_COUNT - 1U) / 2U)) /
+		(EQ_BAR_COUNT - 1U)
+	);
+}
+
+static uint8_t piano_hit_from_band(uint8_t band_value, uint8_t gain_pct)
+{
+	uint16_t scaled = ((uint16_t)band_value * gain_pct) / 100U;
+	uint16_t amp;
+
+	if (scaled > EQ_MAX_LEVEL) {
+		scaled = EQ_MAX_LEVEL;
+	}
+
+	amp = PIANO_HIT_MIN + ((scaled * (PIANO_HIT_MAX - PIANO_HIT_MIN)) / EQ_MAX_LEVEL);
+	if (amp > 255U) {
+		amp = 255U;
+	}
+
+	return (uint8_t)amp;
+}
+
+static void piano_limit_active_keys(uint8_t max_active)
+{
+	bool keep_white[PIANO_WHITE_KEY_COUNT] = { false };
+	bool keep_black[PIANO_BLACK_KEY_COUNT] = { false };
+
+	for (uint8_t pick = 0; pick < max_active; pick++) {
+		uint8_t best_val = 0U;
+		bool best_is_black = false;
+		uint8_t best_idx = 0U;
+
+		for (uint8_t i = 0; i < PIANO_WHITE_KEY_COUNT; i++) {
+			if (!keep_white[i] && piano_white_hit[i] > best_val) {
+				best_val = piano_white_hit[i];
+				best_is_black = false;
+				best_idx = i;
+			}
+		}
+		for (uint8_t i = 0; i < piano_black_used_count; i++) {
+			if (!keep_black[i] && piano_black_hit[i] > best_val) {
+				best_val = piano_black_hit[i];
+				best_is_black = true;
+				best_idx = i;
+			}
+		}
+
+		if (best_val == 0U) {
+			break;
+		}
+
+		if (best_is_black) {
+			keep_black[best_idx] = true;
+		} else {
+			keep_white[best_idx] = true;
+		}
+	}
+
+	for (uint8_t i = 0; i < PIANO_WHITE_KEY_COUNT; i++) {
+		if (!keep_white[i]) {
+			piano_white_hit[i] = 0U;
+		}
+	}
+	for (uint8_t i = 0; i < piano_black_used_count; i++) {
+		if (!keep_black[i]) {
+			piano_black_hit[i] = 0U;
+		}
+	}
 }
 
 static void update_piano_frame(uint32_t dt_ms)
@@ -745,6 +831,90 @@ static void update_piano_frame(uint32_t dt_ms)
 	}
 
 	if (!playback_paused) {
+#if HAVE_MIDI_EQ_DATA
+		uint32_t elapsed_ms = playback_elapsed_ms();
+		uint32_t frame_cursor = elapsed_ms / MIDI_EQ_FRAME_MS;
+
+		if (frame_cursor >= MIDI_EQ_FRAME_COUNT) {
+			frame_cursor = MIDI_EQ_FRAME_COUNT - 1U;
+		}
+
+		if (frame_cursor != piano_last_midi_frame) {
+			uint8_t top_idx[3] = { 0U, 0U, 0U };
+			uint8_t top_val[3] = { 0U, 0U, 0U };
+
+			piano_last_midi_frame = frame_cursor;
+
+			for (uint8_t b = 0; b < EQ_BAR_COUNT; b++) {
+				uint8_t v = midi_eq_frames[frame_cursor][b];
+
+				if (v > top_val[0]) {
+					top_val[2] = top_val[1];
+					top_idx[2] = top_idx[1];
+					top_val[1] = top_val[0];
+					top_idx[1] = top_idx[0];
+					top_val[0] = v;
+					top_idx[0] = b;
+				} else if (v > top_val[1]) {
+					top_val[2] = top_val[1];
+					top_idx[2] = top_idx[1];
+					top_val[1] = v;
+					top_idx[1] = b;
+				} else if (v > top_val[2]) {
+					top_val[2] = v;
+					top_idx[2] = b;
+				}
+			}
+
+			{
+				uint8_t w1 = piano_map_bar_to_white(top_idx[0]);
+				uint8_t w2 = piano_map_bar_to_white(top_idx[1]);
+				uint8_t amp1 = piano_hit_from_band(top_val[0], 100U);
+				uint8_t amp2 = piano_hit_from_band(top_val[1], 92U);
+
+				if (w2 == w1) {
+					if ((w2 + 1U) < PIANO_WHITE_KEY_COUNT) {
+						w2++;
+					} else if (w2 > 0U) {
+						w2--;
+					}
+				}
+
+				if (amp1 > piano_white_hit[w1]) {
+					piano_white_hit[w1] = amp1;
+				}
+				if (amp2 > piano_white_hit[w2]) {
+					piano_white_hit[w2] = amp2;
+				}
+
+				if ((top_val[2] + 8U) >= top_val[1]) {
+					uint8_t amp3 = piano_hit_from_band(top_val[2], 82U);
+
+					if (piano_black_used_count > 0U) {
+						uint8_t b = piano_map_bar_to_black(top_idx[2]);
+
+						if (amp3 > piano_black_hit[b]) {
+							piano_black_hit[b] = amp3;
+						}
+					} else {
+						uint8_t w3 = piano_map_bar_to_white(top_idx[2]);
+
+						if ((w3 == w1) || (w3 == w2)) {
+							if ((w3 + 1U) < PIANO_WHITE_KEY_COUNT && (w3 + 1U) != w1 && (w3 + 1U) != w2) {
+								w3++;
+							} else if (w3 > 0U && (w3 - 1U) != w1 && (w3 - 1U) != w2) {
+								w3--;
+							}
+						}
+
+						if (amp3 > piano_white_hit[w3]) {
+							piano_white_hit[w3] = amp3;
+						}
+					}
+				}
+			}
+		}
+#else
 		while (piano_hit_elapsed_ms >= PIANO_HIT_STEP_MS) {
 			uint8_t hit_count;
 
@@ -792,10 +962,12 @@ static void update_piano_frame(uint32_t dt_ms)
 				}
 			}
 		}
+#endif
 	} else if (piano_hit_elapsed_ms > PIANO_HIT_STEP_MS) {
 		piano_hit_elapsed_ms = PIANO_HIT_STEP_MS;
 	}
 
+	piano_limit_active_keys(3U);
 	piano_apply_visuals();
 	update_progress_line();
 }
