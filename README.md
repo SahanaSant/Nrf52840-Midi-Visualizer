@@ -108,7 +108,7 @@ If `bg_image` files are missing, the app uses a generated gradient/blob backgrou
 - Converts .mid into firmware-friendly frame data (midi_eq_data.h/.c).
 -     `convert_bg_image.py`
 - Converts regular image files into LVGL ARGB image C source (bg_image.h/.c).
-- ## `(other, etc)`
+ ## `(other, etc)`
 -   prj.conf
 -   CMakeLists.txt
 -   Kconfig
