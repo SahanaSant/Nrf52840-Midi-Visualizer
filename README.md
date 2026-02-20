@@ -85,25 +85,35 @@ If `bg_image` files are missing, the app uses a generated gradient/blob backgrou
 
 # Project Structure (What Each File Is For)
 
-`Nrf52840-Midi-Visualizer/`
-  `boards/`
-    `nrf52840dk_nrf52840.overlay` -> Devicetree overlay for board/shield pin/device config overrides used by this app.
-  `src/`
-    `main.c` -> Main firmware app: LVGL UI creation, button handling, mode switching (EQ/piano), and render/update loops.
-    `midi_eq_data.h` -> Auto-generated constants for MIDI frame playback (MIDI_EQ_BAR_COUNT, MIDI_EQ_FRAME_MS, MIDI_EQ_FRAME_COUNT, title).
-    `midi_eq_data.c` -> Auto-generated per-frame EQ data array used at runtime to drive animation.
-    `bg_image.h` -> Declaration for converted LVGL background image descriptor
-    `bg_image.c` -> Converted LVGL image bytes/descriptor used as background asset.
-  `tools/`
-    `load_midi.py` -> One-command helper to convert MIDI, then build and optionally flash. 
-    `convert_midi_to_eq.py` -> Converts .mid into firmware-friendly frame data (midi_eq_data.h/.c).
-    `convert_bg_image.py` -> Converts regular image files into LVGL ARGB image C source (bg_image.h/.c).
-  prj.conf
-  CMakeLists.txt
-  Kconfig
-  sample.yaml
-  VERSION
-  debug.conf
+## `Nrf52840-Midi-Visualizer/`
+-   `boards/`
+-     `nrf52840dk_nrf52840.overlay`
+- Devicetree overlay for board/shield pin/device config overrides used by this app.
+##  `src/`
+-     `main.c`
+- Main firmware app: LVGL UI creation, button handling, mode switching (EQ/piano), and render/update loops.
+-     `midi_eq_data.h`
+- Auto-generated constants for MIDI frame playback (MIDI_EQ_BAR_COUNT, MIDI_EQ_FRAME_MS, MIDI_EQ_FRAME_COUNT, title).
+-     `midi_eq_data.c`
+- Auto-generated per-frame EQ data array used at runtime to drive animation.
+-     `bg_image.h`
+- Declaration for converted LVGL background image descriptor
+-     `bg_image.c`
+- Converted LVGL image bytes/descriptor used as background asset.
+##  `tools/`
+-     `load_midi.py`
+- One-command helper to convert MIDI, then build and optionally flash. 
+-     `convert_midi_to_eq.py`
+- Converts .mid into firmware-friendly frame data (midi_eq_data.h/.c).
+-     `convert_bg_image.py`
+- Converts regular image files into LVGL ARGB image C source (bg_image.h/.c).
+- ## `(other, etc)`
+-   prj.conf
+-   CMakeLists.txt
+-   Kconfig
+-   sample.yaml
+-   VERSION
+-   debug.conf
 
 ## Troubleshooting
 
