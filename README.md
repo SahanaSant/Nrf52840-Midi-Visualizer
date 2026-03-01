@@ -4,8 +4,10 @@ A personal Zephyr project that turns MIDI songs into a live EQ-style visualizer 
 
 
 
-<img width="439" height="561" alt="image" src="https://github.com/user-attachments/assets/dea4a6ee-7882-40fb-9195-0c80c1f5987c" />
-<img width="436" height="561" alt="image" src="https://github.com/user-attachments/assets/8fe29026-54a2-45c7-b429-57ddcee8c32d" />
+<img width="853" height="1280" alt="image" src="https://github.com/user-attachments/assets/53ef44c9-dc9b-464c-93ea-2edb992be58c" />
+<img width="800" height="533" alt="image" src="https://github.com/user-attachments/assets/8541d8d5-2278-41e7-9ce8-6d1a567b7be1" />
+
+
 
 
 ## What it does
