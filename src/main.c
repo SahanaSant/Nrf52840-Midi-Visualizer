@@ -24,28 +24,43 @@
 #define HAVE_MIDI_EQ_DATA 0
 #endif
 
+/* Main loop cadence and render rate. */
 #define APP_TICK_MS 2
 #define EQ_RENDER_MS 5
+
+/* EQ model shape: 12 bars with normalized 0..100 levels. */
 #define EQ_BAR_COUNT 12
 #define EQ_MAX_LEVEL 100
 #define EQ_BASE_LEVEL (EQ_MAX_LEVEL / 3)
+
+/* Q8 fixed-point math for smooth animation without floating point in hot paths. */
 #define FP_SHIFT 8
 #define FP_ONE (1 << FP_SHIFT)
+
+/* Header/background look and global screen dimming. */
 #define TITLE_TEXT "my midi eq"
 #define BG_IMAGE_OPA 190
 #define BG_VEIL_OPA 90
 #define SCREEN_DIM_OPA 100
+
+/* Input/UI timing controls. */
 #define MODE_BUTTON_DEBOUNCE_MS 180
 #define PROGRESS_LINE_H 6
 #define PEAK_CAP_H 3
 #define EQ_VISUAL_HEIGHT_PCT 72
+
+/* Flash/peak envelope tuning used by the EQ renderer. */
 #define EQ_FLASH_ATTACK_GAIN 390
 #define EQ_FLASH_RELEASE_GAIN 240
 #define EQ_FLASH_BOOST_PCT 132
 #define EQ_CAP_FALL_PER_SEC 44
+
+/* Title marquee motion. */
 #define TITLE_SLIDE_RANGE_PX 18
 #define TITLE_SLIDE_TIME_MS 1900
 #define TITLE_MARQUEE_GAP "        "
+
+/* Piano-mode dimensions and hit envelope. */
 #define PIANO_WHITE_KEY_COUNT 14
 #define PIANO_BLACK_KEY_COUNT 10
 #define PIANO_HIT_DECAY_PER_SEC 420U
@@ -60,6 +75,7 @@
 #error "MIDI_EQ_BAR_COUNT must match EQ_BAR_COUNT"
 #endif
 
+/* Envelope is tighter with precomputed MIDI data, looser in fallback random mode. */
 #if HAVE_MIDI_EQ_DATA
 #define EQ_ATTACK_GAIN 320
 #define EQ_RELEASE_GAIN 170
@@ -125,6 +141,7 @@ static const struct gpio_dt_spec piano_button = GPIO_DT_SPEC_GET(DT_ALIAS(sw3), 
 #define HAVE_PIANO_BUTTON 0
 #endif
 
+/* Core LVGL objects for the EQ bars and top chrome. */
 static lv_obj_t *eq_slot[EQ_BAR_COUNT];
 static lv_obj_t *eq_fill[EQ_BAR_COUNT];
 static lv_obj_t *eq_flash[EQ_BAR_COUNT];
@@ -138,6 +155,7 @@ static lv_obj_t *progress_fill_obj;
 static lv_obj_t *piano_panel_obj;
 static lv_obj_t *piano_white_keys[PIANO_WHITE_KEY_COUNT];
 static lv_obj_t *piano_black_keys[PIANO_BLACK_KEY_COUNT];
+/* Fixed-point per-band state used by the real-time envelope update. */
 static int32_t eq_level_fp[EQ_BAR_COUNT];
 static int32_t eq_energy_fp[EQ_BAR_COUNT];
 static int32_t eq_flash_fp[EQ_BAR_COUNT];
@@ -155,6 +173,7 @@ static bool piano_mode_active;
 static uint8_t piano_white_hit[PIANO_WHITE_KEY_COUNT];
 static uint8_t piano_black_hit[PIANO_BLACK_KEY_COUNT];
 static uint8_t piano_black_used_count;
+/* ISR-to-main handoff flags: interrupt handlers set these, main loop consumes them. */
 static volatile bool mode_toggle_pending;
 static volatile bool scene_cycle_pending;
 static volatile bool pause_toggle_pending;
@@ -178,6 +197,7 @@ static uint32_t playback_pause_accum_ms;
 static char header_text_buf[24];
 static char marquee_text_buf[192];
 
+/* Gentle curve so low/high bands can be weighted differently than middle bands. */
 static const uint8_t midi_bar_gain_pct[EQ_BAR_COUNT] = {
 	142U, 130U, 116U, 102U, 84U, 70U, 70U, 84U, 102U, 116U, 130U, 142U
 };
@@ -203,6 +223,7 @@ static void ground_all_bars(void);
 static void piano_reset_state(void);
 static uint32_t prng_next(void);
 
+/* Theme IDs for button-driven scene cycling. */
 enum scene_id {
 	SCENE_WHITE = 0,
 	SCENE_NEON_NIGHT,
@@ -213,6 +234,7 @@ enum scene_id {
 	SCENE_COUNT
 };
 
+/* Per-scene envelope and pulse parameters (color is handled separately). */
 struct scene_cfg {
 	const char *name;
 	uint16_t attack_gain;
@@ -329,6 +351,9 @@ static const struct scene_cfg scenes[SCENE_COUNT] = {
 	}
 };
 
+/**
+ * @brief Blend two 0xRRGGBB colors with an 8-bit interpolation factor.
+ */
 static uint32_t blend_hex(uint32_t a, uint32_t b, uint8_t t)
 {
 	uint32_t inv = 255U - t;
@@ -345,6 +370,9 @@ static uint32_t blend_hex(uint32_t a, uint32_t b, uint8_t t)
 	return (rr << 16) | (rg << 8) | rb;
 }
 
+/**
+ * @brief Darken a 0xRRGGBB color by an 8-bit attenuation amount.
+ */
 static uint32_t darken_hex(uint32_t c, uint8_t amount)
 {
 	uint32_t r = (c >> 16) & 0xFFU;
@@ -359,11 +387,17 @@ static uint32_t darken_hex(uint32_t c, uint8_t amount)
 	return (r << 16) | (g << 8) | b;
 }
 
+/**
+ * @brief Get the currently selected scene configuration.
+ */
 static const struct scene_cfg *active_scene(void)
 {
 	return &scenes[active_scene_idx % SCENE_COUNT];
 }
 
+/**
+ * @brief Sample the active scene gradient and return a 0xRRGGBB color.
+ */
 static uint32_t palette_hex(uint8_t scene_idx, uint8_t t)
 {
 	static const uint32_t white[] = {
@@ -418,6 +452,9 @@ static uint32_t palette_hex(uint8_t scene_idx, uint8_t t)
 	return blend_hex(stops[idx], stops[idx + 1U], frac);
 }
 
+/**
+ * @brief Build the background layer (image/blob fallback + veil).
+ */
 static void create_background_layer(lv_obj_t *screen, lv_coord_t screen_w, lv_coord_t screen_h)
 {
 	lv_obj_t *bg = lv_obj_create(screen);
@@ -473,6 +510,9 @@ static void create_background_layer(lv_obj_t *screen, lv_coord_t screen_w, lv_co
 	lv_obj_clear_flag(veil, LV_OBJ_FLAG_SCROLLABLE);
 }
 
+/**
+ * @brief Update playback progress bar width from elapsed song time.
+ */
 static void update_progress_line(void)
 {
 	if (progress_fill_obj == NULL || progress_track_obj == NULL) {
@@ -503,6 +543,9 @@ static void update_progress_line(void)
 #endif
 }
 
+/**
+ * @brief Apply scene colors and glow styles to visual elements.
+ */
 static void apply_scene_styles(void)
 {
 	for (uint8_t i = 0; i < EQ_BAR_COUNT; i++) {
@@ -581,6 +624,9 @@ static void apply_scene_styles(void)
 
 }
 
+/**
+ * @brief Show or hide EQ bar visuals as a group.
+ */
 static void set_eq_visible(bool show)
 {
 	for (uint8_t i = 0; i < EQ_BAR_COUNT; i++) {
@@ -603,11 +649,17 @@ static void set_eq_visible(bool show)
 	}
 }
 
+/**
+ * @brief LVGL animation callback that updates piano panel Y position.
+ */
 static void piano_slide_exec_cb(void *obj, int32_t value)
 {
 	lv_obj_set_y((lv_obj_t *)obj, (lv_coord_t)value);
 }
 
+/**
+ * @brief Show or hide the piano overlay panel.
+ */
 static void set_piano_visible(bool show)
 {
 	if (piano_panel_obj == NULL) {
@@ -626,6 +678,9 @@ static void set_piano_visible(bool show)
 	piano_visible = show;
 }
 
+/**
+ * @brief Toggle between EQ mode and piano mode.
+ */
 static void set_piano_mode(bool enabled)
 {
 	piano_mode_active = enabled;
@@ -637,6 +692,9 @@ static void set_piano_mode(bool enabled)
 	set_piano_visible(enabled);
 }
 
+/**
+ * @brief Recompute piano key colors/opacity from current hit levels.
+ */
 static void piano_apply_visuals(void)
 {
 	bool white_mode = ((active_scene_idx % SCENE_COUNT) == SCENE_WHITE);
@@ -706,6 +764,9 @@ static void piano_apply_visuals(void)
 	}
 }
 
+/**
+ * @brief Clear piano hit state and refresh key visuals.
+ */
 static void piano_reset_state(void)
 {
 	for (uint8_t i = 0; i < PIANO_WHITE_KEY_COUNT; i++) {
@@ -719,6 +780,9 @@ static void piano_reset_state(void)
 	piano_apply_visuals();
 }
 
+/**
+ * @brief Map an EQ bar index to the nearest white key index.
+ */
 static uint8_t piano_map_bar_to_white(uint8_t bar_idx)
 {
 	return (uint8_t)(
@@ -727,6 +791,9 @@ static uint8_t piano_map_bar_to_white(uint8_t bar_idx)
 	);
 }
 
+/**
+ * @brief Map an EQ bar index to the nearest black key index.
+ */
 static uint8_t piano_map_bar_to_black(uint8_t bar_idx)
 {
 	if (piano_black_used_count == 0U) {
@@ -738,6 +805,9 @@ static uint8_t piano_map_bar_to_black(uint8_t bar_idx)
 	);
 }
 
+/**
+ * @brief Convert band amplitude into piano key hit intensity.
+ */
 static uint8_t piano_hit_from_band(uint8_t band_value, uint8_t gain_pct)
 {
 	uint16_t scaled = ((uint16_t)band_value * gain_pct) / 100U;
@@ -755,6 +825,9 @@ static uint8_t piano_hit_from_band(uint8_t band_value, uint8_t gain_pct)
 	return (uint8_t)amp;
 }
 
+/**
+ * @brief Keep only the strongest piano key hits active.
+ */
 static void piano_limit_active_keys(uint8_t max_active)
 {
 	bool keep_white[PIANO_WHITE_KEY_COUNT] = { false };
@@ -803,6 +876,9 @@ static void piano_limit_active_keys(uint8_t max_active)
 	}
 }
 
+/**
+ * @brief Advance piano-mode animation for one render step.
+ */
 static void update_piano_frame(uint32_t dt_ms)
 {
 	uint32_t decay = (PIANO_HIT_DECAY_PER_SEC * dt_ms) / 1000U;
@@ -972,6 +1048,9 @@ static void update_piano_frame(uint32_t dt_ms)
 	update_progress_line();
 }
 
+/**
+ * @brief Create piano overlay UI objects and initial styling.
+ */
 static int create_piano_overlay(lv_obj_t *screen, lv_coord_t screen_w, lv_coord_t screen_h)
 {
 	const uint8_t black_rel_idx[] = { 0U, 1U, 3U, 4U, 5U };
@@ -1122,6 +1201,9 @@ static int create_piano_overlay(lv_obj_t *screen, lv_coord_t screen_w, lv_coord_
 	return 0;
 }
 
+/**
+ * @brief Toggle status LED only when GPIO setup is valid.
+ */
 static void status_led_toggle_safe(void)
 {
 #if HAVE_STATUS_LED
@@ -1131,6 +1213,9 @@ static void status_led_toggle_safe(void)
 #endif
 }
 
+/**
+ * @brief Fatal-path LED blink loop used when initialization fails.
+ */
 static void fail_blink_forever(uint32_t period_ms)
 {
 	while (1) {
@@ -1139,12 +1224,18 @@ static void fail_blink_forever(uint32_t period_ms)
 	}
 }
 
+/**
+ * @brief Generate next pseudo-random value (LCG).
+ */
 static uint32_t prng_next(void)
 {
 	prng_state = (1664525U * prng_state) + 1013904223U;
 	return prng_state;
 }
 
+/**
+ * @brief Compute playback elapsed time with pause compensation.
+ */
 static uint32_t playback_elapsed_ms(void)
 {
 #if HAVE_MIDI_EQ_DATA
@@ -1167,11 +1258,17 @@ static uint32_t playback_elapsed_ms(void)
 #endif
 }
 
+/**
+ * @brief LVGL animation callback for title horizontal translation.
+ */
 static void title_slide_exec_cb(void *obj, int32_t value)
 {
 	lv_obj_set_style_translate_x((lv_obj_t *)obj, (lv_coord_t)value, 0);
 }
 
+/**
+ * @brief Enable or disable animated title slide offsets.
+ */
 static void set_title_slide(bool enabled)
 {
 	if ((title_glow_label == NULL) || (title_label == NULL)) {
@@ -1188,6 +1285,9 @@ static void set_title_slide(bool enabled)
 	}
 }
 
+/**
+ * @brief Switch header behavior between marquee title and elapsed time.
+ */
 static void set_header_long_mode(bool elapsed_time_mode)
 {
 	if (title_glow_label == NULL || title_label == NULL) {
@@ -1211,6 +1311,9 @@ static void set_header_long_mode(bool elapsed_time_mode)
 	}
 }
 
+/**
+ * @brief Apply text to both glow and foreground title labels.
+ */
 static void set_header_text(const char *text)
 {
 	if (title_glow_label != NULL) {
@@ -1223,6 +1326,9 @@ static void set_header_text(const char *text)
 	}
 }
 
+/**
+ * @brief Refresh header label content based on active header mode.
+ */
 static void refresh_header_text(bool force)
 {
 	if ((title_glow_label == NULL) || (title_label == NULL)) {
@@ -1266,12 +1372,16 @@ static void refresh_header_text(bool force)
 }
 
 #if HAVE_MODE_BUTTON
+/**
+ * @brief ISR for mode button: debounces then sets mode toggle flag.
+ */
 static void mode_button_isr(
 	const struct device *port,
 	struct gpio_callback *cb,
 	uint32_t pins
 )
 {
+	/* Keep ISR tiny: debounce + set flag, defer work to main loop. */
 	ARG_UNUSED(port);
 	ARG_UNUSED(cb);
 	ARG_UNUSED(pins);
@@ -1286,12 +1396,16 @@ static void mode_button_isr(
 #endif
 
 #if HAVE_SCENE_BUTTON
+/**
+ * @brief ISR for scene button: debounces then sets scene-cycle flag.
+ */
 static void scene_button_isr(
 	const struct device *port,
 	struct gpio_callback *cb,
 	uint32_t pins
 )
 {
+	/* Keep ISR tiny: debounce + set flag, defer work to main loop. */
 	ARG_UNUSED(port);
 	ARG_UNUSED(cb);
 	ARG_UNUSED(pins);
@@ -1306,12 +1420,16 @@ static void scene_button_isr(
 #endif
 
 #if HAVE_PAUSE_BUTTON
+/**
+ * @brief ISR for pause button: debounces then sets pause toggle flag.
+ */
 static void pause_button_isr(
 	const struct device *port,
 	struct gpio_callback *cb,
 	uint32_t pins
 )
 {
+	/* Keep ISR tiny: debounce + set flag, defer work to main loop. */
 	ARG_UNUSED(port);
 	ARG_UNUSED(cb);
 	ARG_UNUSED(pins);
@@ -1326,12 +1444,16 @@ static void pause_button_isr(
 #endif
 
 #if HAVE_PIANO_BUTTON
+/**
+ * @brief ISR for piano button: debounces then sets piano toggle flag.
+ */
 static void piano_button_isr(
 	const struct device *port,
 	struct gpio_callback *cb,
 	uint32_t pins
 )
 {
+	/* Keep ISR tiny: debounce + set flag, defer work to main loop. */
 	ARG_UNUSED(port);
 	ARG_UNUSED(cb);
 	ARG_UNUSED(pins);
@@ -1345,6 +1467,9 @@ static void piano_button_isr(
 }
 #endif
 
+/**
+ * @brief Configure mode button GPIO and interrupt callback.
+ */
 static void setup_mode_button(void)
 {
 #if HAVE_MODE_BUTTON
@@ -1367,6 +1492,9 @@ static void setup_mode_button(void)
 #endif
 }
 
+/**
+ * @brief Configure scene button GPIO and interrupt callback.
+ */
 static void setup_scene_button(void)
 {
 #if HAVE_SCENE_BUTTON
@@ -1389,6 +1517,9 @@ static void setup_scene_button(void)
 #endif
 }
 
+/**
+ * @brief Configure pause button GPIO and interrupt callback.
+ */
 static void setup_pause_button(void)
 {
 #if HAVE_PAUSE_BUTTON
@@ -1411,6 +1542,9 @@ static void setup_pause_button(void)
 #endif
 }
 
+/**
+ * @brief Configure piano button GPIO and interrupt callback.
+ */
 static void setup_piano_button(void)
 {
 #if HAVE_PIANO_BUTTON
@@ -1433,6 +1567,9 @@ static void setup_piano_button(void)
 #endif
 }
 
+/**
+ * @brief Reset all EQ bar visuals and envelopes to baseline.
+ */
 static void ground_all_bars(void)
 {
 	for (uint8_t i = 0; i < EQ_BAR_COUNT; i++) {
@@ -1455,6 +1592,9 @@ static void ground_all_bars(void)
 
 }
 
+/**
+ * @brief Build target EQ energy for the frame from MIDI or fallback noise.
+ */
 static void excite_energy(uint32_t dt_ms)
 {
 	ARG_UNUSED(dt_ms);
@@ -1501,6 +1641,7 @@ static void excite_energy(uint32_t dt_ms)
 			acc += shaped_fp[i + 1U] * 8;
 			w += 8;
 		}
+		/* Small neighbor bleed so bars look smoother and less "spiky". */
 		eq_energy_fp[i] = (acc / w) * midi_bar_gain_pct[i] / 100;
 		if (eq_energy_fp[i] > max_fp) {
 			eq_energy_fp[i] = max_fp;
@@ -1540,6 +1681,9 @@ static void excite_energy(uint32_t dt_ms)
 	}
 }
 
+/**
+ * @brief Create all EQ-mode LVGL objects and initialize styles.
+ */
 static int create_eq_ui(void)
 {
 	lv_obj_t *screen = lv_screen_active();
@@ -1574,6 +1718,7 @@ static int create_eq_ui(void)
 	lv_obj_set_scrollbar_mode(screen, LV_SCROLLBAR_MODE_OFF);
 	lv_obj_set_scroll_dir(screen, LV_DIR_NONE);
 
+	/* Build static UI once: background, chrome, bars, and overlays. */
 	create_background_layer(screen, screen_w, screen_h);
 	beat_pulse_layer = lv_obj_create(screen);
 	if (beat_pulse_layer == NULL) {
@@ -1784,6 +1929,9 @@ static int create_eq_ui(void)
 	return 0;
 }
 
+/**
+ * @brief Advance EQ envelopes and push resulting geometry to LVGL.
+ */
 static void update_eq_frame(uint32_t dt_ms)
 {
 	int32_t max_fp = EQ_MAX_LEVEL * FP_ONE;
@@ -1809,6 +1957,7 @@ static void update_eq_frame(uint32_t dt_ms)
 		int32_t flash_step;
 		int32_t cap_level_fp;
 
+		/* Attack/release envelope toward target energy. */
 		if (delta >= 0) {
 			step = (delta * EQ_ATTACK_GAIN) >> 8;
 			if (step < EQ_MIN_UP_STEP) {
@@ -1842,6 +1991,7 @@ static void update_eq_frame(uint32_t dt_ms)
 			eq_level_fp[i] = max_fp;
 		}
 
+		/* Separate flash envelope gives a brighter transient trail. */
 		flash_target_fp = eq_energy_fp[i] + ((eq_energy_fp[i] * EQ_FLASH_BOOST_PCT) / 100);
 		if (flash_target_fp > max_fp) {
 			flash_target_fp = max_fp;
@@ -1920,6 +2070,7 @@ static void update_eq_frame(uint32_t dt_ms)
 			flash_level = EQ_MAX_LEVEL;
 		}
 
+		/* Convert normalized levels (0..100) into pixel heights. */
 		fill_h = (lv_coord_t)((level * slot_h_px * EQ_VISUAL_HEIGHT_PCT) / (EQ_MAX_LEVEL * 100));
 		flash_h = (lv_coord_t)((flash_level * slot_h_px * EQ_VISUAL_HEIGHT_PCT) / (EQ_MAX_LEVEL * 100));
 		if (fill_h < 2) {
@@ -1960,6 +2111,9 @@ static void update_eq_frame(uint32_t dt_ms)
 	update_progress_line();
 }
 
+/**
+ * @brief Application entry: initialize hardware/UI and run render loop.
+ */
 int main(void)
 {
 #if HAVE_STATUS_LED
@@ -2000,6 +2154,7 @@ int main(void)
 	int64_t last_render = next_render;
 
 	while (1) {
+		/* Consume ISR events and apply state transitions in thread context. */
 		if (mode_toggle_pending) {
 			mode_toggle_pending = false;
 			show_elapsed_time = !show_elapsed_time;
@@ -2047,6 +2202,7 @@ int main(void)
 				dt_ms = EQ_RENDER_MS;
 			}
 
+			/* Update the active visual mode once per render tick. */
 			if (piano_mode_active) {
 				update_piano_frame(dt_ms);
 			} else {
@@ -2057,6 +2213,7 @@ int main(void)
 			next_render = now + EQ_RENDER_MS;
 		}
 
+		/* Let LVGL flush/redraw and drive animations/timers. */
 		lv_timer_handler();
 		k_msleep(APP_TICK_MS);
 	}

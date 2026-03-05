@@ -12212,7 +12212,7 @@ tbss            0x0000000000037554        0x4
                 [!provide]                        PROVIDE (__tls_end = __tbss_end)
                 [!provide]                        PROVIDE (__tls_size = (__tbss_end - __tdata_start))
 
-rodata          0x0000000000037560    0x80648
+rodata          0x0000000000037560    0x74250
  *(SORT_BY_ALIGNMENT(.rodata))
  .rodata        0x0000000000037560       0x10 modules/lvgl/libmodules__lvgl.a(lv_draw_image.c.obj)
  .rodata        0x0000000000037570        0xc modules/lvgl/libmodules__lvgl.a(lv_image_cache.c.obj)
@@ -12555,237 +12555,237 @@ rodata          0x0000000000037560    0x80648
  .rodata.default_kb_ctrl_lc_map
                 0x0000000000038f3c       0x50 modules/lvgl/libmodules__lvgl.a(lv_keyboard.c.obj)
  .rodata.refresh_header_text.str1.1
-                0x0000000000038f8c       0x30 app/libapp.a(main.c.obj)
+                0x0000000000038f8c       0x3f app/libapp.a(main.c.obj)
  .rodata.main.str1.1
-                0x0000000000038fbc      0x271 app/libapp.a(main.c.obj)
+                0x0000000000038fcb      0x271 app/libapp.a(main.c.obj)
                                         0x274 (size before relaxing)
  .rodata.str1.1
-                0x000000000003922d       0x45 app/libapp.a(main.c.obj)
+                0x000000000003923c       0x45 app/libapp.a(main.c.obj)
  .rodata.midi_bar_gain_pct
-                0x0000000000039272        0xc app/libapp.a(main.c.obj)
+                0x0000000000039281        0xc app/libapp.a(main.c.obj)
  .rodata.bg_image_map
-                0x000000000003927e    0x4b000 app/libapp.a(bg_image.c.obj)
-                0x000000000003927e                bg_image_map
+                0x000000000003928d    0x4b000 app/libapp.a(bg_image.c.obj)
+                0x000000000003928d                bg_image_map
  .rodata.midi_eq_frames
-                0x000000000008427e    0x2f7b4 app/libapp.a(midi_eq_data.c.obj)
-                0x000000000008427e                midi_eq_frames
+                0x000000000008428d    0x233ac app/libapp.a(midi_eq_data.c.obj)
+                0x000000000008428d                midi_eq_frames
  .rodata.str1.1
-                0x00000000000b3a32       0x23 zephyr/libzephyr.a(mipi_dbi_spi.c.obj)
+                0x00000000000a7639       0x23 zephyr/libzephyr.a(mipi_dbi_spi.c.obj)
  .rodata.str1.1
-                0x00000000000b3a55        0xf zephyr/arch/arch/arm/core/mpu/libarch__arm__core__mpu.a(arm_mpu_regions.c.obj)
+                0x00000000000a765c        0xf zephyr/arch/arch/arm/core/mpu/libarch__arm__core__mpu.a(arm_mpu_regions.c.obj)
  .rodata.CSWTCH.5
-                0x00000000000b3a64        0x6 zephyr/soc/soc/nrf52840/libsoc__nordic.a(soc.c.obj)
+                0x00000000000a766b        0x6 zephyr/soc/soc/nrf52840/libsoc__nordic.a(soc.c.obj)
  .rodata.str1.1
-                0x00000000000b3a6a        0x6 zephyr/subsys/input/libsubsys__input.a(input.c.obj)
+                0x00000000000a7671        0x6 zephyr/subsys/input/libsubsys__input.a(input.c.obj)
  .rodata.str1.1
-                0x00000000000b3a70        0xf zephyr/drivers/clock_control/libdrivers__clock_control.a(clock_control_nrf.c.obj)
+                0x00000000000a7677        0xf zephyr/drivers/clock_control/libdrivers__clock_control.a(clock_control_nrf.c.obj)
  .rodata.str1.1
-                0x00000000000b3a7f        0xa zephyr/drivers/display/libdrivers__display.a(display_ili9xxx.c.obj)
+                0x00000000000a7686        0xa zephyr/drivers/display/libdrivers__display.a(display_ili9xxx.c.obj)
  .rodata.ili9340_regs_0
-                0x00000000000b3a89       0x2a zephyr/drivers/display/libdrivers__display.a(display_ili9xxx.c.obj)
+                0x00000000000a7690       0x2a zephyr/drivers/display/libdrivers__display.a(display_ili9xxx.c.obj)
  .rodata.ili9340_quirks
-                0x00000000000b3ab3        0x1 zephyr/drivers/display/libdrivers__display.a(display_ili9xxx.c.obj)
+                0x00000000000a76ba        0x1 zephyr/drivers/display/libdrivers__display.a(display_ili9xxx.c.obj)
  .rodata.str1.1
-                0x00000000000b3ab4       0x10 zephyr/drivers/entropy/libdrivers__entropy.a(entropy_nrf5.c.obj)
+                0x00000000000a76bb       0x10 zephyr/drivers/entropy/libdrivers__entropy.a(entropy_nrf5.c.obj)
  .rodata.str1.1
-                0x00000000000b3ac4       0x1c zephyr/drivers/gpio/libdrivers__gpio.a(gpio_nrfx.c.obj)
+                0x00000000000a76cb       0x1c zephyr/drivers/gpio/libdrivers__gpio.a(gpio_nrfx.c.obj)
  .rodata.str1.1
-                0x00000000000b3ae0        0xd zephyr/drivers/i2c/libdrivers__i2c.a(i2c_nrfx_twi.c.obj)
+                0x00000000000a76e7        0xd zephyr/drivers/i2c/libdrivers__i2c.a(i2c_nrfx_twi.c.obj)
  .rodata.str1.1
-                0x00000000000b3aed        0xa zephyr/drivers/input/libdrivers__input.a(input_ft5336.c.obj)
+                0x00000000000a76f4        0xa zephyr/drivers/input/libdrivers__input.a(input_ft5336.c.obj)
  .rodata.str1.1
-                0x00000000000b3af7        0x8 zephyr/drivers/input/libdrivers__input.a(input_gpio_keys.c.obj)
+                0x00000000000a76fe        0x8 zephyr/drivers/input/libdrivers__input.a(input_gpio_keys.c.obj)
  .rodata.drive_modes
-                0x00000000000b3aff        0x8 zephyr/drivers/pinctrl/libdrivers__pinctrl.a(pinctrl_nrf.c.obj)
+                0x00000000000a7706        0x8 zephyr/drivers/pinctrl/libdrivers__pinctrl.a(pinctrl_nrf.c.obj)
  .rodata.str1.1
-                0x00000000000b3b07        0xd zephyr/drivers/pwm/libdrivers__pwm.a(pwm_nrfx.c.obj)
+                0x00000000000a770e        0xd zephyr/drivers/pwm/libdrivers__pwm.a(pwm_nrfx.c.obj)
  .rodata.str1.1
-                0x00000000000b3b14        0xe zephyr/drivers/serial/libdrivers__serial.a(uart_nrfx_uarte.c.obj)
+                0x00000000000a771b        0xe zephyr/drivers/serial/libdrivers__serial.a(uart_nrfx_uarte.c.obj)
  .rodata.str1.1
-                0x00000000000b3b22        0xd zephyr/drivers/spi/libdrivers__spi.a(spi_nrfx_spi.c.obj)
+                0x00000000000a7729        0xd zephyr/drivers/spi/libdrivers__spi.a(spi_nrfx_spi.c.obj)
  .rodata.str1.1
-                0x00000000000b3b2f        0xd zephyr/drivers/spi/libdrivers__spi.a(spi_nrfx_spim.c.obj)
+                0x00000000000a7736        0xd zephyr/drivers/spi/libdrivers__spi.a(spi_nrfx_spim.c.obj)
  .rodata.CSWTCH.14
-                0x00000000000b3b3c        0x6 modules/hal_nordic/nrfx/libmodules__hal_nordic__nrfx.a(system_nrf52840.c.obj)
+                0x00000000000a7743        0x6 modules/hal_nordic/nrfx/libmodules__hal_nordic__nrfx.a(system_nrf52840.c.obj)
  .rodata.CSWTCH.5
-                0x00000000000b3b42        0x6 modules/hal_nordic/nrfx/libmodules__hal_nordic__nrfx.a(system_nrf52840.c.obj)
+                0x00000000000a7749        0x6 modules/hal_nordic/nrfx/libmodules__hal_nordic__nrfx.a(system_nrf52840.c.obj)
  .rodata.port_offset.1
-                0x00000000000b3b48       0x10 modules/hal_nordic/nrfx/libmodules__hal_nordic__nrfx.a(nrfx_gpiote.c.obj)
- .rodata.ports  0x00000000000b3b58        0x2 modules/hal_nordic/nrfx/libmodules__hal_nordic__nrfx.a(nrfx_gpiote.c.obj)
+                0x00000000000a774f       0x10 modules/hal_nordic/nrfx/libmodules__hal_nordic__nrfx.a(nrfx_gpiote.c.obj)
+ .rodata.ports  0x00000000000a775f        0x2 modules/hal_nordic/nrfx/libmodules__hal_nordic__nrfx.a(nrfx_gpiote.c.obj)
  .rodata.CSWTCH.39
-                0x00000000000b3b5a        0x6 modules/hal_nordic/nrfx/libmodules__hal_nordic__nrfx.a(nrfx_spim.c.obj)
+                0x00000000000a7761        0x6 modules/hal_nordic/nrfx/libmodules__hal_nordic__nrfx.a(nrfx_spim.c.obj)
  .rodata.str1.1
-                0x00000000000b3b60        0x7 modules/lvgl/libmodules__lvgl.a(lv_obj.c.obj)
+                0x00000000000a7767        0x7 modules/lvgl/libmodules__lvgl.a(lv_obj.c.obj)
  .rodata.CSWTCH.57
-                0x00000000000b3b67        0x3 modules/lvgl/libmodules__lvgl.a(lv_draw_buf.c.obj)
+                0x00000000000a776e        0x3 modules/lvgl/libmodules__lvgl.a(lv_draw_buf.c.obj)
  .rodata.CSWTCH.40
-                0x00000000000b3b6a        0x3 modules/lvgl/libmodules__lvgl.a(lv_draw_buf.c.obj)
+                0x00000000000a7771        0x3 modules/lvgl/libmodules__lvgl.a(lv_draw_buf.c.obj)
  .rodata.CSWTCH.8
-                0x00000000000b3b6d        0xb modules/lvgl/libmodules__lvgl.a(lv_draw.c.obj)
+                0x00000000000a7774        0xb modules/lvgl/libmodules__lvgl.a(lv_draw.c.obj)
  .rodata.lv_draw_sw_init.str1.1
-                0x00000000000b3b78        0x3 modules/lvgl/libmodules__lvgl.a(lv_draw_sw.c.obj)
+                0x00000000000a777f        0x3 modules/lvgl/libmodules__lvgl.a(lv_draw_sw.c.obj)
  .rodata.wcorr.0
-                0x00000000000b3b7b       0x21 modules/lvgl/libmodules__lvgl.a(lv_draw_sw_line.c.obj)
+                0x00000000000a7782       0x21 modules/lvgl/libmodules__lvgl.a(lv_draw_sw_line.c.obj)
  .rodata.opa2_table
-                0x00000000000b3b9c        0x4 modules/lvgl/libmodules__lvgl.a(lv_font_fmt_txt.c.obj)
+                0x00000000000a77a3        0x4 modules/lvgl/libmodules__lvgl.a(lv_font_fmt_txt.c.obj)
  .rodata.opa4_table
-                0x00000000000b3ba0       0x10 modules/lvgl/libmodules__lvgl.a(lv_font_fmt_txt.c.obj)
+                0x00000000000a77a7       0x10 modules/lvgl/libmodules__lvgl.a(lv_font_fmt_txt.c.obj)
  .rodata.kern_class_values
-                0x00000000000b3bb0      0xbad modules/lvgl/libmodules__lvgl.a(lv_font_montserrat_14.c.obj)
+                0x00000000000a77b7      0xbad modules/lvgl/libmodules__lvgl.a(lv_font_montserrat_14.c.obj)
  .rodata.kern_right_class_mapping
-                0x00000000000b475d       0x9e modules/lvgl/libmodules__lvgl.a(lv_font_montserrat_14.c.obj)
+                0x00000000000a8364       0x9e modules/lvgl/libmodules__lvgl.a(lv_font_montserrat_14.c.obj)
  .rodata.kern_left_class_mapping
-                0x00000000000b47fb       0x9e modules/lvgl/libmodules__lvgl.a(lv_font_montserrat_14.c.obj)
+                0x00000000000a8402       0x9e modules/lvgl/libmodules__lvgl.a(lv_font_montserrat_14.c.obj)
  .rodata.glyph_bitmap
-                0x00000000000b4899     0x2280 modules/lvgl/libmodules__lvgl.a(lv_font_montserrat_14.c.obj)
+                0x00000000000a84a0     0x2280 modules/lvgl/libmodules__lvgl.a(lv_font_montserrat_14.c.obj)
  .rodata.glyph_bitmap
-                0x00000000000b6b19      0x6bf modules/lvgl/libmodules__lvgl.a(lv_font_unscii_16.c.obj)
+                0x00000000000aa720      0x6bf modules/lvgl/libmodules__lvgl.a(lv_font_unscii_16.c.obj)
  .rodata.lv_bin_decoder_info.str1.1
-                0x00000000000b71d8        0x4 modules/lvgl/libmodules__lvgl.a(lv_bin_decoder.c.obj)
+                0x00000000000aaddf        0x4 modules/lvgl/libmodules__lvgl.a(lv_bin_decoder.c.obj)
  .rodata.lv_bin_decoder_init.str1.1
-                0x00000000000b71dc        0x4 modules/lvgl/libmodules__lvgl.a(lv_bin_decoder.c.obj)
+                0x00000000000aade3        0x4 modules/lvgl/libmodules__lvgl.a(lv_bin_decoder.c.obj)
  .rodata.lv_image_cache_init.str1.1
-                0x00000000000b71e0        0x6 modules/lvgl/libmodules__lvgl.a(lv_image_cache.c.obj)
+                0x00000000000aade7        0x6 modules/lvgl/libmodules__lvgl.a(lv_image_cache.c.obj)
  .rodata.lv_image_header_cache_init.str1.1
-                0x00000000000b71e6        0xd modules/lvgl/libmodules__lvgl.a(lv_image_header_cache.c.obj)
+                0x00000000000aaded        0xd modules/lvgl/libmodules__lvgl.a(lv_image_header_cache.c.obj)
  .rodata.CSWTCH.7
-                0x00000000000b71f3       0x30 modules/lvgl/libmodules__lvgl.a(lv_color.c.obj)
+                0x00000000000aadfa       0x30 modules/lvgl/libmodules__lvgl.a(lv_color.c.obj)
  .rodata.lv_fs_get_ext.str1.1
-                0x00000000000b7223        0xd modules/lvgl/libmodules__lvgl.a(lv_fs.c.obj)
+                0x00000000000aae2a        0xd modules/lvgl/libmodules__lvgl.a(lv_fs.c.obj)
                                           0x1 (size before relaxing)
  .rodata.colors.0
-                0x00000000000b7223       0xe4 modules/lvgl/libmodules__lvgl.a(lv_palette.c.obj)
+                0x00000000000aae2a       0xe4 modules/lvgl/libmodules__lvgl.a(lv_palette.c.obj)
  .rodata.colors.1
-                0x00000000000b7307      0x11d modules/lvgl/libmodules__lvgl.a(lv_palette.c.obj)
+                0x00000000000aaf0e      0x11d modules/lvgl/libmodules__lvgl.a(lv_palette.c.obj)
  .rodata.colors.2
-                0x00000000000b7424       0x39 modules/lvgl/libmodules__lvgl.a(lv_palette.c.obj)
+                0x00000000000ab02b       0x39 modules/lvgl/libmodules__lvgl.a(lv_palette.c.obj)
  .rodata.white.0
-                0x00000000000b745d        0x3 modules/lvgl/libmodules__lvgl.a(lv_style.c.obj)
+                0x00000000000ab064        0x3 modules/lvgl/libmodules__lvgl.a(lv_style.c.obj)
  .rodata.lv_style_builtin_prop_flag_lookup_table
-                0x00000000000b7460       0x8a modules/lvgl/libmodules__lvgl.a(lv_style.c.obj)
-                0x00000000000b7460                lv_style_builtin_prop_flag_lookup_table
+                0x00000000000ab067       0x8a modules/lvgl/libmodules__lvgl.a(lv_style.c.obj)
+                0x00000000000ab067                lv_style_builtin_prop_flag_lookup_table
  .rodata.lv_text_get_next_line.str1.1
-                0x00000000000b74ea        0xa modules/lvgl/libmodules__lvgl.a(lv_text.c.obj)
+                0x00000000000ab0f1        0xa modules/lvgl/libmodules__lvgl.a(lv_text.c.obj)
  .rodata.lv_theme_default_init.str1.1
-                0x00000000000b74f4        0x4 modules/lvgl/libmodules__lvgl.a(lv_theme_default.c.obj)
+                0x00000000000ab0fb        0x4 modules/lvgl/libmodules__lvgl.a(lv_theme_default.c.obj)
  .rodata.trans_props.0
-                0x00000000000b74f8        0xc modules/lvgl/libmodules__lvgl.a(lv_theme_default.c.obj)
+                0x00000000000ab0ff        0xc modules/lvgl/libmodules__lvgl.a(lv_theme_default.c.obj)
  .rodata.str1.1
-                0x00000000000b7504        0x7 modules/lvgl/libmodules__lvgl.a(lv_arc.c.obj)
+                0x00000000000ab10b        0x7 modules/lvgl/libmodules__lvgl.a(lv_arc.c.obj)
  .rodata.str1.1
-                0x00000000000b750b        0x7 modules/lvgl/libmodules__lvgl.a(lv_bar.c.obj)
+                0x00000000000ab112        0x7 modules/lvgl/libmodules__lvgl.a(lv_bar.c.obj)
  .rodata.str1.1
-                0x00000000000b7512        0xa modules/lvgl/libmodules__lvgl.a(lv_button.c.obj)
+                0x00000000000ab119        0xa modules/lvgl/libmodules__lvgl.a(lv_button.c.obj)
  .rodata.draw_main.str1.1
-                0x00000000000b751c        0xa modules/lvgl/libmodules__lvgl.a(lv_buttonmatrix.c.obj)
+                0x00000000000ab123        0xa modules/lvgl/libmodules__lvgl.a(lv_buttonmatrix.c.obj)
                                           0x2 (size before relaxing)
  .rodata.str1.1
-                0x00000000000b751c       0x29 modules/lvgl/libmodules__lvgl.a(lv_buttonmatrix.c.obj)
+                0x00000000000ab123       0x29 modules/lvgl/libmodules__lvgl.a(lv_buttonmatrix.c.obj)
                                          0x2a (size before relaxing)
  .rodata.lv_calendar_set_month_shown.str1.1
-                0x00000000000b7545        0x3 modules/lvgl/libmodules__lvgl.a(lv_calendar.c.obj)
+                0x00000000000ab14c        0x3 modules/lvgl/libmodules__lvgl.a(lv_calendar.c.obj)
  .rodata.lv_calendar_constructor.str1.1
-                0x00000000000b7548        0x3 modules/lvgl/libmodules__lvgl.a(lv_calendar.c.obj)
+                0x00000000000ab14f        0x3 modules/lvgl/libmodules__lvgl.a(lv_calendar.c.obj)
                                           0x6 (size before relaxing)
  .rodata.str1.1
-                0x00000000000b754b       0x1e modules/lvgl/libmodules__lvgl.a(lv_calendar.c.obj)
+                0x00000000000ab152       0x1e modules/lvgl/libmodules__lvgl.a(lv_calendar.c.obj)
  .rodata.my_constructor.str1.1
-                0x00000000000b7569        0x8 modules/lvgl/libmodules__lvgl.a(lv_calendar_header_arrow.c.obj)
+                0x00000000000ab170        0x8 modules/lvgl/libmodules__lvgl.a(lv_calendar_header_arrow.c.obj)
  .rodata.value_changed_event_cb.str1.1
-                0x00000000000b7571        0x6 modules/lvgl/libmodules__lvgl.a(lv_calendar_header_arrow.c.obj)
+                0x00000000000ab178        0x6 modules/lvgl/libmodules__lvgl.a(lv_calendar_header_arrow.c.obj)
  .rodata.str1.1
-                0x00000000000b7577       0x6f modules/lvgl/libmodules__lvgl.a(lv_calendar_header_arrow.c.obj)
+                0x00000000000ab17e       0x6f modules/lvgl/libmodules__lvgl.a(lv_calendar_header_arrow.c.obj)
  .rodata.my_constructor.str1.1
-                0x00000000000b75e6      0x295 modules/lvgl/libmodules__lvgl.a(lv_calendar_header_dropdown.c.obj)
+                0x00000000000ab1ed      0x295 modules/lvgl/libmodules__lvgl.a(lv_calendar_header_dropdown.c.obj)
  .rodata.str1.1
-                0x00000000000b787b       0x1c modules/lvgl/libmodules__lvgl.a(lv_calendar_header_dropdown.c.obj)
+                0x00000000000ab482       0x1c modules/lvgl/libmodules__lvgl.a(lv_calendar_header_dropdown.c.obj)
  .rodata.str1.1
-                0x00000000000b7897        0x9 modules/lvgl/libmodules__lvgl.a(lv_chart.c.obj)
+                0x00000000000ab49e        0x9 modules/lvgl/libmodules__lvgl.a(lv_chart.c.obj)
  .rodata.lv_checkbox_constructor.str1.1
-                0x00000000000b78a0        0xa modules/lvgl/libmodules__lvgl.a(lv_checkbox.c.obj)
+                0x00000000000ab4a7        0xa modules/lvgl/libmodules__lvgl.a(lv_checkbox.c.obj)
  .rodata.str1.1
-                0x00000000000b78aa        0xc modules/lvgl/libmodules__lvgl.a(lv_checkbox.c.obj)
+                0x00000000000ab4b1        0xc modules/lvgl/libmodules__lvgl.a(lv_checkbox.c.obj)
  .rodata.lv_dropdown_constructor.str1.1
-                0x00000000000b78b6       0x1f modules/lvgl/libmodules__lvgl.a(lv_dropdown.c.obj)
+                0x00000000000ab4bd       0x1f modules/lvgl/libmodules__lvgl.a(lv_dropdown.c.obj)
  .rodata.lv_dropdown_get_options.str1.1
-                0x00000000000b78d5        0x1 modules/lvgl/libmodules__lvgl.a(lv_dropdown.c.obj)
+                0x00000000000ab4dc        0x1 modules/lvgl/libmodules__lvgl.a(lv_dropdown.c.obj)
  .rodata.str1.1
-                0x00000000000b78d5       0x1d modules/lvgl/libmodules__lvgl.a(lv_dropdown.c.obj)
+                0x00000000000ab4dc       0x1d modules/lvgl/libmodules__lvgl.a(lv_dropdown.c.obj)
  .rodata.str1.1
-                0x00000000000b78f2        0x9 modules/lvgl/libmodules__lvgl.a(lv_image.c.obj)
+                0x00000000000ab4f9        0x9 modules/lvgl/libmodules__lvgl.a(lv_image.c.obj)
  .rodata.lv_keyboard_def_event_cb.str1.1
-                0x00000000000b78fb       0x25 modules/lvgl/libmodules__lvgl.a(lv_keyboard.c.obj)
+                0x00000000000ab502       0x25 modules/lvgl/libmodules__lvgl.a(lv_keyboard.c.obj)
                                          0x31 (size before relaxing)
  .rodata.str1.1
-                0x00000000000b7920       0x76 modules/lvgl/libmodules__lvgl.a(lv_keyboard.c.obj)
+                0x00000000000ab527       0x76 modules/lvgl/libmodules__lvgl.a(lv_keyboard.c.obj)
                                          0xc5 (size before relaxing)
  .rodata.lv_label_constructor.str1.1
-                0x00000000000b7996        0x5 modules/lvgl/libmodules__lvgl.a(lv_label.c.obj)
+                0x00000000000ab59d        0x5 modules/lvgl/libmodules__lvgl.a(lv_label.c.obj)
  .rodata.str1.1
-                0x00000000000b799b        0x9 modules/lvgl/libmodules__lvgl.a(lv_label.c.obj)
+                0x00000000000ab5a2        0x9 modules/lvgl/libmodules__lvgl.a(lv_label.c.obj)
  .rodata.str1.1
-                0x00000000000b79a4        0x7 modules/lvgl/libmodules__lvgl.a(lv_led.c.obj)
+                0x00000000000ab5ab        0x7 modules/lvgl/libmodules__lvgl.a(lv_led.c.obj)
  .rodata.str1.1
-                0x00000000000b79ab        0x8 modules/lvgl/libmodules__lvgl.a(lv_line.c.obj)
+                0x00000000000ab5b2        0x8 modules/lvgl/libmodules__lvgl.a(lv_line.c.obj)
  .rodata.str1.1
-                0x00000000000b79b3       0x24 modules/lvgl/libmodules__lvgl.a(lv_list.c.obj)
+                0x00000000000ab5ba       0x24 modules/lvgl/libmodules__lvgl.a(lv_list.c.obj)
  .rodata.lv_menu_constructor.str1.1
-                0x00000000000b79d7        0x4 modules/lvgl/libmodules__lvgl.a(lv_menu.c.obj)
+                0x00000000000ab5de        0x4 modules/lvgl/libmodules__lvgl.a(lv_menu.c.obj)
  .rodata.str1.1
-                0x00000000000b79d7       0x44 modules/lvgl/libmodules__lvgl.a(lv_menu.c.obj)
+                0x00000000000ab5de       0x44 modules/lvgl/libmodules__lvgl.a(lv_menu.c.obj)
  .rodata.str1.1
-                0x00000000000b7a1b       0x81 modules/lvgl/libmodules__lvgl.a(lv_msgbox.c.obj)
+                0x00000000000ab622       0x81 modules/lvgl/libmodules__lvgl.a(lv_msgbox.c.obj)
  .rodata.lv_roller_constructor.str1.1
-                0x00000000000b7a9c       0x2d modules/lvgl/libmodules__lvgl.a(lv_roller.c.obj)
+                0x00000000000ab6a3       0x2d modules/lvgl/libmodules__lvgl.a(lv_roller.c.obj)
  .rodata.str1.1
-                0x00000000000b7ac9       0x1a modules/lvgl/libmodules__lvgl.a(lv_roller.c.obj)
+                0x00000000000ab6d0       0x1a modules/lvgl/libmodules__lvgl.a(lv_roller.c.obj)
  .rodata.scale_draw_indicator.str1.1
-                0x00000000000b7ae3        0x3 modules/lvgl/libmodules__lvgl.a(lv_scale.c.obj)
+                0x00000000000ab6ea        0x3 modules/lvgl/libmodules__lvgl.a(lv_scale.c.obj)
  .rodata.str1.1
-                0x00000000000b7ae3        0x9 modules/lvgl/libmodules__lvgl.a(lv_scale.c.obj)
+                0x00000000000ab6ea        0x9 modules/lvgl/libmodules__lvgl.a(lv_scale.c.obj)
  .rodata.str1.1
-                0x00000000000b7aec        0xa modules/lvgl/libmodules__lvgl.a(lv_slider.c.obj)
+                0x00000000000ab6f3        0xa modules/lvgl/libmodules__lvgl.a(lv_slider.c.obj)
  .rodata.lv_spinbox_updatevalue.str1.1
-                0x00000000000b7af6        0x3 modules/lvgl/libmodules__lvgl.a(lv_spinbox.c.obj)
+                0x00000000000ab6fd        0x3 modules/lvgl/libmodules__lvgl.a(lv_spinbox.c.obj)
  .rodata.str1.1
-                0x00000000000b7af6        0xb modules/lvgl/libmodules__lvgl.a(lv_spinbox.c.obj)
+                0x00000000000ab6fd        0xb modules/lvgl/libmodules__lvgl.a(lv_spinbox.c.obj)
  .rodata.str1.1
-                0x00000000000b7b01        0xb modules/lvgl/libmodules__lvgl.a(lv_spinner.c.obj)
+                0x00000000000ab708        0xb modules/lvgl/libmodules__lvgl.a(lv_spinner.c.obj)
  .rodata.str1.1
-                0x00000000000b7b0c        0xa modules/lvgl/libmodules__lvgl.a(lv_switch.c.obj)
+                0x00000000000ab713        0xa modules/lvgl/libmodules__lvgl.a(lv_switch.c.obj)
  .rodata.str1.1
-                0x00000000000b7b16        0x9 modules/lvgl/libmodules__lvgl.a(lv_table.c.obj)
+                0x00000000000ab71d        0x9 modules/lvgl/libmodules__lvgl.a(lv_table.c.obj)
  .rodata.str1.1
-                0x00000000000b7b1f        0xb modules/lvgl/libmodules__lvgl.a(lv_tabview.c.obj)
+                0x00000000000ab726        0xb modules/lvgl/libmodules__lvgl.a(lv_tabview.c.obj)
  .rodata.lv_textarea_constructor.str1.1
-                0x00000000000b7b2a        0x1 modules/lvgl/libmodules__lvgl.a(lv_textarea.c.obj)
+                0x00000000000ab731        0x1 modules/lvgl/libmodules__lvgl.a(lv_textarea.c.obj)
  .rodata.lv_textarea_get_password_bullet.str1.1
-                0x00000000000b7b2a        0x4 modules/lvgl/libmodules__lvgl.a(lv_textarea.c.obj)
+                0x00000000000ab731        0x4 modules/lvgl/libmodules__lvgl.a(lv_textarea.c.obj)
                                           0x6 (size before relaxing)
  .rodata.str1.1
-                0x00000000000b7b2e        0xc modules/lvgl/libmodules__lvgl.a(lv_textarea.c.obj)
+                0x00000000000ab735        0xc modules/lvgl/libmodules__lvgl.a(lv_textarea.c.obj)
  .rodata.str1.1
-                0x00000000000b7b3a       0x14 modules/lvgl/libmodules__lvgl.a(lv_tileview.c.obj)
+                0x00000000000ab741       0x14 modules/lvgl/libmodules__lvgl.a(lv_tileview.c.obj)
  .rodata.str1.1
-                0x00000000000b7b4e        0x7 modules/lvgl/libmodules__lvgl.a(lv_win.c.obj)
+                0x00000000000ab755        0x7 modules/lvgl/libmodules__lvgl.a(lv_win.c.obj)
  .rodata.str1.1
-                0x00000000000b7b55        0xd modules/lvgl/libmodules__lvgl.a(lvgl_pointer_input.c.obj)
+                0x00000000000ab75c        0xd modules/lvgl/libmodules__lvgl.a(lvgl_pointer_input.c.obj)
  .rodata.z_cstart.str1.1
-                0x00000000000b7b62        0x5 zephyr/kernel/libkernel.a(init.c.obj)
+                0x00000000000ab769        0x5 zephyr/kernel/libkernel.a(init.c.obj)
  .rodata.str1.1
-                0x00000000000b7b67        0x9 zephyr/kernel/libkernel.a(system_work_q.c.obj)
+                0x00000000000ab76e        0x9 zephyr/kernel/libkernel.a(system_work_q.c.obj)
  .rodata.boot_banner.str1.1
-                0x00000000000b7b70       0x28 zephyr/kernel/libkernel.a(banner.c.obj)
+                0x00000000000ab777       0x28 zephyr/kernel/libkernel.a(banner.c.obj)
  .rodata.__l_vfprintf.str1.1
-                0x00000000000b7b98        0xf c:\users\sahan\zephyr-sdk-0.17.2\arm-zephyr-eabi\bin\../lib/gcc/../../picolibc/arm-zephyr-eabi/lib/thumb/v7e-m/nofp\libc.a(libc_tinystdio_vflprintf.c.o)
+                0x00000000000ab79f        0xf c:\users\sahan\zephyr-sdk-0.17.2\arm-zephyr-eabi\bin\../lib/gcc/../../picolibc/arm-zephyr-eabi/lib/thumb/v7e-m/nofp\libc.a(libc_tinystdio_vflprintf.c.o)
  *(SORT_BY_ALIGNMENT(.gnu.linkonce.r.*))
-                0x00000000000b7ba8                . = ALIGN (0x4)
- *fill*         0x00000000000b7ba7        0x1 
+                0x00000000000ab7b0                . = ALIGN (0x4)
+ *fill*         0x00000000000ab7ae        0x2 
 
 /DISCARD/
  *(SORT_BY_ALIGNMENT(.eh_frame))
-                0x00000000000b7ba8                __rodata_region_end = .
-                0x00000000000b7bc0                . = ALIGN (_region_min_align)
+                0x00000000000ab7b0                __rodata_region_end = .
+                0x00000000000ab7c0                . = ALIGN (_region_min_align)
                 0x0000000000100000                . = ALIGN ((0x1 << LOG2CEIL ((__rodata_region_end - ADDR (rom_start)))))
                 0x0000000000100000                __rom_region_end = ((__rom_region_start + .) - ADDR (rom_start))
 
@@ -12798,7 +12798,7 @@ rodata          0x0000000000037560    0x80648
                 0x0000000020000000                . = ALIGN (_region_min_align)
                 0x0000000020000000                _image_ram_start = .
 
-.ramfunc        0x0000000020000000        0x0 load address 0x00000000000b7ba8
+.ramfunc        0x0000000020000000        0x0 load address 0x00000000000ab7b0
                 0x0000000020000000                __ramfunc_region_start = .
                 0x0000000020000000                . = ALIGN (_region_min_align)
                 0x0000000020000000                . = ALIGN ((0x1 << LOG2CEIL (__ramfunc_size)))
@@ -12809,9 +12809,9 @@ rodata          0x0000000000037560    0x80648
                 0x0000000020000000                . = ALIGN ((0x1 << LOG2CEIL (__ramfunc_size)))
                 0x0000000020000000                __ramfunc_end = .
                 0x0000000000000000                __ramfunc_size = (__ramfunc_end - __ramfunc_start)
-                0x00000000000b7ba8                __ramfunc_load_start = LOADADDR (.ramfunc)
+                0x00000000000ab7b0                __ramfunc_load_start = LOADADDR (.ramfunc)
 
-datas           0x0000000020000000      0x1f8 load address 0x00000000000b7ba8
+datas           0x0000000020000000      0x1f8 load address 0x00000000000ab7b0
                 0x0000000020000000                __data_region_start = .
                 0x0000000020000000                __data_start = .
  *(SORT_BY_ALIGNMENT(.data))
@@ -12844,10 +12844,10 @@ datas           0x0000000020000000      0x1f8 load address 0x00000000000b7ba8
  *(SORT_BY_ALIGNMENT(.kernel.*))
                 0x00000000200001f8                __data_end = .
                 0x00000000000001f8                __data_size = (__data_end - __data_start)
-                0x00000000000b7ba8                __data_load_start = LOADADDR (datas)
-                0x00000000000b7ba8                __data_region_load_start = LOADADDR (datas)
+                0x00000000000ab7b0                __data_load_start = LOADADDR (datas)
+                0x00000000000ab7b0                __data_region_load_start = LOADADDR (datas)
 
-device_states   0x00000000200001f8       0x1c load address 0x00000000000b7da0
+device_states   0x00000000200001f8       0x1c load address 0x00000000000ab9a8
                 0x00000000200001f8                . = ALIGN (0x4)
                 0x00000000200001f8                __device_states_start = .
  *(SORT_BY_ALIGNMENT(.z_devstate))
@@ -12869,35 +12869,35 @@ device_states   0x00000000200001f8       0x1c load address 0x00000000000b7da0
                 0x0000000020000214                . = ALIGN (0x4)
 
 log_mpsc_pbuf_area
-                0x0000000020000214        0x0 load address 0x00000000000b7dbc
+                0x0000000020000214        0x0 load address 0x00000000000ab9c4
                 0x0000000020000214                _log_mpsc_pbuf_list_start = .
  *(SORT_BY_NAME(SORT_BY_ALIGNMENT(._log_mpsc_pbuf.static.*)))
                 0x0000000020000214                _log_mpsc_pbuf_list_end = .
 
 log_msg_ptr_area
-                0x0000000020000214        0x0 load address 0x00000000000b7dbc
+                0x0000000020000214        0x0 load address 0x00000000000ab9c4
                 0x0000000020000214                _log_msg_ptr_list_start = .
  *(SORT_BY_NAME(SORT_BY_ALIGNMENT(._log_msg_ptr.static.*)))
                 0x0000000020000214                _log_msg_ptr_list_end = .
 
 log_dynamic_area
-                0x0000000020000214        0x0 load address 0x00000000000b7dbc
+                0x0000000020000214        0x0 load address 0x00000000000ab9c4
                 0x0000000020000214                _log_dynamic_list_start = .
  *(SORT_BY_NAME(SORT_BY_ALIGNMENT(._log_dynamic.static.*)))
                 0x0000000020000214                _log_dynamic_list_end = .
 
-k_timer_area    0x0000000020000214        0x0 load address 0x00000000000b7dbc
+k_timer_area    0x0000000020000214        0x0 load address 0x00000000000ab9c4
                 0x0000000020000214                _k_timer_list_start = .
  *(SORT_BY_NAME(SORT_BY_ALIGNMENT(._k_timer.static.*)))
                 0x0000000020000214                _k_timer_list_end = .
 
 k_mem_slab_area
-                0x0000000020000214        0x0 load address 0x00000000000b7dbc
+                0x0000000020000214        0x0 load address 0x00000000000ab9c4
                 0x0000000020000214                _k_mem_slab_list_start = .
  *(SORT_BY_NAME(SORT_BY_ALIGNMENT(._k_mem_slab.static.*)))
                 0x0000000020000214                _k_mem_slab_list_end = .
 
-k_heap_area     0x0000000020000214       0x14 load address 0x00000000000b7dbc
+k_heap_area     0x0000000020000214       0x14 load address 0x00000000000ab9c4
                 0x0000000020000214                _k_heap_list_start = .
  *(SORT_BY_NAME(SORT_BY_ALIGNMENT(._k_heap.static.*)))
  ._k_heap.static._system_heap_
@@ -12905,17 +12905,17 @@ k_heap_area     0x0000000020000214       0x14 load address 0x00000000000b7dbc
                 0x0000000020000214                _system_heap
                 0x0000000020000228                _k_heap_list_end = .
 
-k_mutex_area    0x0000000020000228        0x0 load address 0x00000000000b7dd0
+k_mutex_area    0x0000000020000228        0x0 load address 0x00000000000ab9d8
                 0x0000000020000228                _k_mutex_list_start = .
  *(SORT_BY_NAME(SORT_BY_ALIGNMENT(._k_mutex.static.*)))
                 0x0000000020000228                _k_mutex_list_end = .
 
-k_stack_area    0x0000000020000228        0x0 load address 0x00000000000b7dd0
+k_stack_area    0x0000000020000228        0x0 load address 0x00000000000ab9d8
                 0x0000000020000228                _k_stack_list_start = .
  *(SORT_BY_NAME(SORT_BY_ALIGNMENT(._k_stack.static.*)))
                 0x0000000020000228                _k_stack_list_end = .
 
-k_msgq_area     0x0000000020000228       0x50 load address 0x00000000000b7dd0
+k_msgq_area     0x0000000020000228       0x50 load address 0x00000000000ab9d8
                 0x0000000020000228                _k_msgq_list_start = .
  *(SORT_BY_NAME(SORT_BY_ALIGNMENT(._k_msgq.static.*)))
  ._k_msgq.static.input_msgq_
@@ -12926,54 +12926,54 @@ k_msgq_area     0x0000000020000228       0x50 load address 0x00000000000b7dd0
                 0x0000000020000250                lvgl_input_msgq_pointer_0
                 0x0000000020000278                _k_msgq_list_end = .
 
-k_mbox_area     0x0000000020000278        0x0 load address 0x00000000000b7e20
+k_mbox_area     0x0000000020000278        0x0 load address 0x00000000000aba28
                 0x0000000020000278                _k_mbox_list_start = .
  *(SORT_BY_NAME(SORT_BY_ALIGNMENT(._k_mbox.static.*)))
                 0x0000000020000278                _k_mbox_list_end = .
 
-k_pipe_area     0x0000000020000278        0x0 load address 0x00000000000b7e20
+k_pipe_area     0x0000000020000278        0x0 load address 0x00000000000aba28
                 0x0000000020000278                _k_pipe_list_start = .
  *(SORT_BY_NAME(SORT_BY_ALIGNMENT(._k_pipe.static.*)))
                 0x0000000020000278                _k_pipe_list_end = .
 
-k_sem_area      0x0000000020000278        0x0 load address 0x00000000000b7e20
+k_sem_area      0x0000000020000278        0x0 load address 0x00000000000aba28
                 0x0000000020000278                _k_sem_list_start = .
  *(SORT_BY_NAME(SORT_BY_ALIGNMENT(._k_sem.static.*)))
                 0x0000000020000278                _k_sem_list_end = .
 
-k_event_area    0x0000000020000278        0x0 load address 0x00000000000b7e20
+k_event_area    0x0000000020000278        0x0 load address 0x00000000000aba28
                 0x0000000020000278                _k_event_list_start = .
  *(SORT_BY_NAME(SORT_BY_ALIGNMENT(._k_event.static.*)))
                 0x0000000020000278                _k_event_list_end = .
 
-k_queue_area    0x0000000020000278        0x0 load address 0x00000000000b7e20
+k_queue_area    0x0000000020000278        0x0 load address 0x00000000000aba28
                 0x0000000020000278                _k_queue_list_start = .
  *(SORT_BY_NAME(SORT_BY_ALIGNMENT(._k_queue.static.*)))
                 0x0000000020000278                _k_queue_list_end = .
 
-k_fifo_area     0x0000000020000278        0x0 load address 0x00000000000b7e20
+k_fifo_area     0x0000000020000278        0x0 load address 0x00000000000aba28
                 0x0000000020000278                _k_fifo_list_start = .
  *(SORT_BY_NAME(SORT_BY_ALIGNMENT(._k_fifo.static.*)))
                 0x0000000020000278                _k_fifo_list_end = .
 
-k_lifo_area     0x0000000020000278        0x0 load address 0x00000000000b7e20
+k_lifo_area     0x0000000020000278        0x0 load address 0x00000000000aba28
                 0x0000000020000278                _k_lifo_list_start = .
  *(SORT_BY_NAME(SORT_BY_ALIGNMENT(._k_lifo.static.*)))
                 0x0000000020000278                _k_lifo_list_end = .
 
-k_condvar_area  0x0000000020000278        0x0 load address 0x00000000000b7e20
+k_condvar_area  0x0000000020000278        0x0 load address 0x00000000000aba28
                 0x0000000020000278                _k_condvar_list_start = .
  *(SORT_BY_NAME(SORT_BY_ALIGNMENT(._k_condvar.static.*)))
                 0x0000000020000278                _k_condvar_list_end = .
 
 sys_mem_blocks_ptr_area
-                0x0000000020000278        0x0 load address 0x00000000000b7e20
+                0x0000000020000278        0x0 load address 0x00000000000aba28
                 0x0000000020000278                _sys_mem_blocks_ptr_list_start = .
  *(SORT_BY_NAME(SORT_BY_ALIGNMENT(._sys_mem_blocks_ptr.static.*)))
                 0x0000000020000278                _sys_mem_blocks_ptr_list_end = .
 
 net_buf_pool_area
-                0x0000000020000278        0x0 load address 0x00000000000b7e20
+                0x0000000020000278        0x0 load address 0x00000000000aba28
                 0x0000000020000278                _net_buf_pool_list_start = .
  *(SORT_BY_NAME(SORT_BY_ALIGNMENT(._net_buf_pool.static.*)))
                 0x0000000020000278                _net_buf_pool_list_end = .
@@ -16374,10 +16374,10 @@ net_buf_pool_area
                 0x0000000000005bc9       0x1e c:/users/sahan/zephyr-sdk-0.17.2/arm-zephyr-eabi/bin/../lib/gcc/arm-zephyr-eabi/12.2.0/thumb/v7e-m/nofp\libgcc.a(_arm_fixunsdfsi.o)
  *(SORT_BY_ALIGNMENT(.gnu.attributes))
 
-.last_section   0x00000000000b7e20        0x4
+.last_section   0x00000000000aba28        0x4
  *(SORT_BY_ALIGNMENT(.last_section))
- .last_section  0x00000000000b7e20        0x4 zephyr/libzephyr.a(last_section_id.c.obj)
-                0x00000000000b7e24                _flash_used = ((LOADADDR (.last_section) + SIZEOF (.last_section)) - __rom_region_start)
+ .last_section  0x00000000000aba28        0x4 zephyr/libzephyr.a(last_section_id.c.obj)
+                0x00000000000aba2c                _flash_used = ((LOADADDR (.last_section) + SIZEOF (.last_section)) - __rom_region_start)
 
 bss             0x0000000020000278    0x2cc56
                 0x0000000020000278                . = ALIGN (0x4)
