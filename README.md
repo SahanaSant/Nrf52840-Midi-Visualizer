@@ -137,3 +137,10 @@ EQ mode and piano mode are mutually exclusive on screen.
 UI scrolling is disabled for a fixed display.
 Piano mode currently maps from generated 12-band MIDI frame data (not raw per-note event stream yet).
 In white scene, piano keys are classic black/white and hit notes flash yellow.
+
+# Future Plans
+- I will leave off this project as is! I will create another visualizer, except with a speaker module, more interactive touch surface, a sophistacated OS, and with an SD card so it can hold many songs without having to rely on Window's terminal to change songs. 
+- The plan is, it will be compatible with WAV files, undergo a Fast Fourier Transform with the help of helper Python files to conver the file to frequencies that will be mapped on the EQ Bars. There will most likely be no piano feature just to stray away from the "visual" aspect and more on the "functionality".
+- WAV files can be uploaded via serial UART connection. Background images can also be switched
+- Dynamic Colouring Sets will be available instead
+- Planning to host both a menu where you toggle between songs and the EQ Bar Visualizer
