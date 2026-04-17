@@ -151,3 +151,7 @@ In white scene, piano keys are classic black/white and hit notes flash yellow.
 # References/ Inspo
 https://www.youtube.com/watch?v=KWsbca9rGX0&t=11s
 <img width="1019" height="581" alt="image" src="https://github.com/user-attachments/assets/4cde2ff4-01c7-46e2-9bfc-695067ba586e" />
+
+#Relevant Data Sheets
+https://learn.adafruit.com/adafruit-2-8-tft-touch-shield-v2
+https://cdn-learn.adafruit.com/downloads/pdf/adafruit-2-8-tft-touch-shield-v2.pdf
