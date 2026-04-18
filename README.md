@@ -145,13 +145,13 @@ In white scene, piano keys are classic black/white and hit notes flash yellow.
 - Dynamic Colouring Sets will be available instead
 - Planning to host both a menu where you toggle between songs and the EQ Bar Visualizer
 
-- The plans are to first simulate this with an ESP32 so I can also embedd some cheeky bluetooth, with power from my laptop
+- The plans are to first simulate this with an ESP32/Pi Zero 2 W/Pi 5 so I can also embedd some cheeky bluetooth, with power from my laptop
 - Then I will use 3.3 V to 5V boost converter, a charging module, and a MAX98357A maybe for the speaker
   
 # References/ Inspo
 https://www.youtube.com/watch?v=KWsbca9rGX0&t=11s
 <img width="1019" height="581" alt="image" src="https://github.com/user-attachments/assets/4cde2ff4-01c7-46e2-9bfc-695067ba586e" />
 
-#Relevant Data Sheets
+# Relevant Data Sheets
 https://learn.adafruit.com/adafruit-2-8-tft-touch-shield-v2
 https://cdn-learn.adafruit.com/downloads/pdf/adafruit-2-8-tft-touch-shield-v2.pdf
